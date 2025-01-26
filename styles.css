@@ -1,0 +1,193 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(125deg, #13131A 0%, #1C1C24 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    padding: 20px;
+}
+
+.container {
+    max-width: 400px;
+    width: 100%;
+    padding: 40px 20px;
+    position: relative;
+    animation: fadeIn 0.8s ease-out;
+}
+
+/* Glowing orbs */
+.orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.4;
+    z-index: -1;
+}
+
+.orb-1 {
+    width: 300px;
+    height: 300px;
+    background: #6366F1;
+    top: 10%;
+    left: 20%;
+    animation: float 8s ease-in-out infinite;
+}
+
+.orb-2 {
+    width: 250px;
+    height: 250px;
+    background: #8B5CF6;
+    bottom: 10%;
+    right: 20%;
+    animation: float 6s ease-in-out infinite reverse;
+}
+
+.profile {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.profile-pic {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    background: linear-gradient(45deg, #6366F1, #8B5CF6);
+    padding: 3px;
+    animation: profilePop 0.6s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+}
+
+.profile-pic-inner {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: #1C1C24;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.profile h1 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    animation: slideUp 0.6s ease-out;
+}
+
+.profile p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 16px;
+    animation: slideUp 0.6s ease-out 0.1s backwards;
+}
+
+.links {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.link {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 16px 20px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: white;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    animation: slideUp 0.6s ease-out calc(var(--delay) * 0.1s) backwards;
+}
+
+.link:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.link svg {
+    width: 20px;
+    height: 20px;
+    margin-right: 12px;
+}
+
+.link .external {
+    margin-left: auto;
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+}
+
+.link:hover .external {
+    opacity: 0.8;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes profilePop {
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    70% {
+        transform: scale(1.1);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 30px 16px;
+    }
+    
+    .profile-pic {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .profile h1 {
+        font-size: 20px;
+    }
+    
+    .profile p {
+        font-size: 14px;
+    }
+    
+    .link {
+        padding: 14px 16px;
+    }
+}
