@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Script Library</title>
+    <title>SignalX Script Library</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lucide-react/0.302.0/lucide.min.css" integrity="sha512-4uV2tJb8/o8r/9y133gK4vL4z4xU6tG5w00p+8P+y1C0J7J1a9H9B+C4q8U+n+Wn3E/q88+1aVzY8c/2u1QYw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
@@ -272,10 +272,10 @@
                 <input type="text" id="search" placeholder="Search scripts..." class="w-full py-2 px-4 text-gray-700 dark:text-gray-200 bg-transparent border-none outline-none">
             </div>
             <select class="language-select bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg py-2 px-4 text-gray-700 dark:text-gray-200 cursor-pointer mt-2" id="languageSelect">
-                <option value="all">All Languages</option>
-                <option value="bash">Bash</option>
-                <option value="python">Python</option>
-                <option value="javascript">JavaScript</option>
+                <option value="all">All types</option>
+                <option value="pranks">Pranks</option>
+                <option value="destructive">Destructive</option>
+                <option value="utility">Utility</option>
             </select>
         </div>
 
@@ -316,34 +316,50 @@
 
         // Sample Script Data
         const scriptCategories = {
-            "Utility Scripts": [
+            "Prank Scripts": [
                 {
                     id: "file-backup",
                     title: "File Backup",
-                    language: "bash",
+                    language: "prank",
                     code: "#!/bin/bash\n\nbackup_dir=\"./backup\"\nif [ ! -d \"$backup_dir\" ]; then\n  mkdir \"$backup_dir\"\nfi\n\ncp -r ./src/* \"$backup_dir\"/",
                     description: "Creates a backup of the src directory"
                 },
                 {
                     id: "system-info",
                     title: "System Info",
-                    language: "bash",
+                    language: "prank",
                     code: "#!/bin/bash\n\necho \"System Information:\"\nuname -a\necho \"\\nMemory Usage:\"\nfree -h",
                     description: "Displays system and memory information"
                 }
             ],
-            "Development Tools": [
+            "Utility Scripts": [
                 {
                     id: "git-setup",
                     title: "Git Setup",
-                    language: "bash",
+                    language: "utility",
                     code: "git init\ngit add .\ngit commit -m \"Initial commit\"\ngit branch -M main",
                     description: "Initializes a new Git repository"
                 },
                 {
                     id: "hello-world-py",
                     title: "Hello World Python",
-                    language: "python",
+                    language: "utility",
+                    code: "def greet(name):\n    return f'Hello, {name}!'\n\nprint(greet('World'))",
+                    description: "Simple Python greeting function"
+                }
+            ],
+            "Destructive Scripts": [
+                {
+                    id: "git-setup",
+                    title: "Git Setup",
+                    language: "destructive",
+                    code: "git init\ngit add .\ngit commit -m \"Initial commit\"\ngit branch -M main",
+                    description: "Initializes a new Git repository"
+                },
+                {
+                    id: "hello-world-py",
+                    title: "Hello World Python",
+                    language: "destructive",
                     code: "def greet(name):\n    return f'Hello, {name}!'\n\nprint(greet('World'))",
                     description: "Simple Python greeting function"
                 }
