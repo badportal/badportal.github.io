@@ -1,0 +1,13 @@
+{
+  "name": "PortalHack for M5StickC Plus 2",
+  "version": "1.0.0",
+  "home_assistant_domain": "portal_hack",
+  "builds": [
+    {
+      "chipFamily": "ESP32",
+      "parts": [
+        { "path": "https://mastrpcs.github.io/portalhack/merged-firmware2.bin", "offset": 0 }
+      ]
+    }
+  ]
+}
