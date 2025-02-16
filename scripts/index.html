@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Script Library</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lucide-react/0.302.0/lucide.min.css" integrity="sha512-4uV2tJb8/o8r/9y133gK4vL4z4xU6tG5w00p+8P+y1C0J7J1a9H9B+C4q8U+n+Wn3E/q88+1aVzY8c/2u1QYw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /* Custom CSS for Lucide icons (optional, but good practice) */
+        .lucide {
+            display: inline-block;
+            vertical-align: middle;
+        }
+        /* CSS Styles - Keeping most of the original styles, adapting for Tailwind */
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            color: #333;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .dark-mode {
+            background-color: #1a202c; /* Dark background */
+            color: #fff;             /* White text */
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .search-bar i {
+            padding: 10px;
+            color: #777;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            outline: none;
+        }
+
+        .language-select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #fff;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .card {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            transition: background-color 0.3s;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 15px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            background-color: #e9ecef;
+            border-bottom: 1px solid #dee2e6;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .card-content {
+            padding: 15px;
+            display: none;
+        }
+
+        .card-content pre {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: monospace;
+            font-size: 0.9em;
+            color: #212529;
+        }
+        .card-content p {
+            margin-bottom: 10px;
+        }
+
+        .expanded .card-content {
+            display: block;
+        }
+
+        .script-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+
+        .script-actions button {
+            border: none;
+            padding: 8px 15px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .script-actions button:hover {
+            opacity: 0.8;
+        }
+
+        .script-actions .copy-btn {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .script-actions .download-btn {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .script-actions .share-btn {
+            background-color: #ffc107;
+            color: #212529;
+        }
+
+        /* Dark Mode Styling - Simplified for global changes */
+        .dark-mode {
+            background-color: #1a202c; /* Dark background */
+            color: #fff;             /* White text */
+        }
+
+        /* General dark mode overrides for specific elements */
+        .dark-mode .search-bar,
+        .dark-mode .language-select {
+            background-color: #2d3748;
+            border-color: #4a5568;
+            color: #fff; /* Override text color for these elements */
+        }
+
+        .dark-mode .card {
+            background-color: #2d3748; /* Dark background for cards */
+            color: #fff;         /* White text for cards */
+        }
+
+        .dark-mode .card-header {
+            background-color: #3c4858; /* Dark background for card headers */
+            color: #fff;         /* White text for card headers */
+        }
+
+        .dark-mode .card-content pre {
+            background-color: #4a5568; /* Dark background for pre elements */
+            color: #fff;         /* White text for pre elements */
+        }
+
+        .dark-mode .script-actions .copy-btn,
+        .dark-mode .script-actions .download-btn,
+        .dark-mode .script-actions .share-btn {
+            color: #fff; /* Ensure button text is always white in dark mode */
+        }
+
+
+        /* Toast Notification Styles */
+        #toastContainer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: none;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        #toast {
+            background-color: #28a745;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s;
+        }
+
+        #toast.error {
+            background-color: #dc3545;
+        }
+
+
+        #toast button {
+            background-color: transparent;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0;
+            transition: color 0.3s;
+        }
+
+        #toast button:hover {
+            color: #ddd;
+        }
+
+        /* Login Button Styling */
+        #loginBtn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background-color 0.3s;
+        }
+
+        #loginBtn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+
+    <div class="container">
+        <div class="header">
+            <h1 class="text-3xl font-bold">Script Library</h1>
+            <div class="header-actions">
+                <button id="loginBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Login</button>
+                <button id="darkModeToggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-300">
+                    <svg id="moonIcon" class="lucide" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 10 9.79z"></path></svg>
+                    <svg id="sunIcon" class="lucide hidden" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="search-area mb-4">
+            <div class="search-bar bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden flex items-center">
+                <i class="lucide text-gray-400 dark:text-gray-500 ml-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </i>
+                <input type="text" id="search" placeholder="Search scripts..." class="w-full py-2 px-4 text-gray-700 dark:text-gray-200 bg-transparent border-none outline-none">
+            </div>
+            <select class="language-select bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg py-2 px-4 text-gray-700 dark:text-gray-200 cursor-pointer mt-2" id="languageSelect">
+                <option value="all">All Languages</option>
+                <option value="bash">Bash</option>
+                <option value="python">Python</option>
+                <option value="javascript">JavaScript</option>
+            </select>
+        </div>
+
+        <div id="scriptLibrary" class="space-y-4">
+            <!-- Script content will be dynamically added here -->
+        </div>
+
+        <!-- Toast Notification (Optional) -->
+        <div id="toastContainer" class="fixed top-4 right-4 z-50">
+            <div id="toast" class="bg-green-500 text-white px-4 py-2 rounded-lg shadow-md flex justify-between items-center">
+                <span id="toastMessage"></span>
+                <button onclick="hideToast()" class="ml-4 text-white focus:outline-none">
+                   <svg class="lucide" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // JavaScript (Handles the logic)
+
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const moonIcon = document.getElementById('moonIcon');
+        const sunIcon = document.getElementById('sunIcon');
+        const searchInput = document.getElementById('search');
+        const languageSelect = document.getElementById('languageSelect');
+        const scriptLibraryDiv = document.getElementById('scriptLibrary');
+        const toastContainer = document.getElementById('toastContainer');
+        const toastMessage = document.getElementById('toastMessage');
+        const loginBtn = document.getElementById('loginBtn');
+
+        let darkMode = false;
+        let searchQuery = '';
+        let selectedLanguage = 'all';
+        let isAuthenticated = false;
+        let user = null;
+
+        // Sample Script Data
+        const scriptCategories = {
+            "Utility Scripts": [
+                {
+                    id: "file-backup",
+                    title: "File Backup",
+                    language: "bash",
+                    code: "#!/bin/bash\n\nbackup_dir=\"./backup\"\nif [ ! -d \"$backup_dir\" ]; then\n  mkdir \"$backup_dir\"\nfi\n\ncp -r ./src/* \"$backup_dir\"/",
+                    description: "Creates a backup of the src directory"
+                },
+                {
+                    id: "system-info",
+                    title: "System Info",
+                    language: "bash",
+                    code: "#!/bin/bash\n\necho \"System Information:\"\nuname -a\necho \"\\nMemory Usage:\"\nfree -h",
+                    description: "Displays system and memory information"
+                }
+            ],
+            "Development Tools": [
+                {
+                    id: "git-setup",
+                    title: "Git Setup",
+                    language: "bash",
+                    code: "git init\ngit add .\ngit commit -m \"Initial commit\"\ngit branch -M main",
+                    description: "Initializes a new Git repository"
+                },
+                {
+                    id: "hello-world-py",
+                    title: "Hello World Python",
+                    language: "python",
+                    code: "def greet(name):\n    return f'Hello, {name}!'\n\nprint(greet('World'))",
+                    description: "Simple Python greeting function"
+                }
+            ]
+        };
+
+
+        // Custom Toast Function
+        function showToast(message, type = 'success') {
+            toastMessage.textContent = message;
+            toastContainer.classList.remove('bg-green-500', 'bg-red-500'); // Remove existing classes
+            if (type === 'error') {
+                toastContainer.classList.add('bg-red-500'); // Apply error style
+            } else {
+                toastContainer.classList.add('bg-green-500'); // Apply success style
+            }
+            toastContainer.style.display = 'flex';
+            setTimeout(() => hideToast(), 3000);
+        }
+
+        function hideToast() {
+            toastContainer.style.display = 'none';
+        }
+
+
+        // Authentication functions (Simulated)
+        function login() {
+            isAuthenticated = true;
+            user = { name: 'Demo User', email: 'user@example.com' };
+            loginBtn.textContent = `Logout (${user.name})`;
+            showToast('Logged in successfully');
+        }
+
+        function logout() {
+            isAuthenticated = false;
+            user = null;
+            loginBtn.textContent = 'Login';
+            showToast('Logged out successfully');
+        }
+
+        // Helper functions (copy, download, share, etc.)
+        function copyScript(button) {
+            const codeElement = button.closest('.script-actions').previousElementSibling.querySelector('code'); // Find the <code> element
+            const code = codeElement ? codeElement.textContent : ''; // Get the code content
+            if (!code) {
+                showToast('No code to copy', 'error');
+                return;
+            }
+            navigator.clipboard.writeText(code)
+                .then(() => showToast('Copied to clipboard'))
+                .catch(() => showToast('Failed to copy to clipboard', 'error'));
+        }
+
+        // Helper function (for download button)
+        function downloadScript(button) {
+            const title = button.getAttribute('data-title');
+            const language = button.getAttribute('data-language');
+            const code = document.querySelector(`code.language-${language}`).textContent;
+
+            // Create a blob URL for the code
+            const blob = new Blob([code], { type: `text/${language}` });
+            const url = URL.createObjectURL(blob);
+
+            // Create a link element to download the code
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${title}.${language}`;
+            a.click();
+
+            // Clean up
+            URL.revokeObjectURL(url);
+        }
+
+        // Helper function (for share button)
+        function shareScript(button) {
+            const id = button.getAttribute('data-id');
+            const code = document.querySelector(`pre[code-id='${id}']`).querySelector('code').textContent;
+
+            // Open the share dialog with the code as plain text
+            navigator.clipboard.writeText(code)
+                .then(() => navigator.share({
+                    title: 'Code snippet',
+                    text: 'Check out this code snippet!',
+                    url: window.location.href,
+                    files: []
+                }))
+                .catch(() => showToast('Failed to share', 'error'));
+        }
+
+        // Function to create and display scripts
+        function displayScripts() {
+            scriptLibraryDiv.innerHTML = '';
+
+            const filteredScripts = Object.entries(scriptCategories).reduce((acc, [category, scripts]) => {
+                const filtered = scripts.filter(script => {
+                    const matchesSearch = script.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        script.description.toLowerCase().includes(searchQuery.toLowerCase());
+                    const matchesLanguage = selectedLanguage === 'all' || script.language === selectedLanguage;
+                    return matchesSearch && matchesLanguage;
+                });
+                if (filtered.length > 0) {
+                    acc[category] = filtered;
+                }
+                return acc;
+            }, {});
+
+            Object.entries(filteredScripts).forEach(([category, scripts]) => {
+                const categoryCard = document.createElement('div');
+                categoryCard.classList.add('card', 'rounded-lg', 'shadow-md', 'transition-colors', 'duration-300'); // Tailwind classes
+                // Add the classes for the dark mode
+                categoryCard.classList.add('dark:bg-gray-700');
+
+                const categoryHeader = document.createElement('div');
+                categoryHeader.classList.add('card-header', 'bg-gray-200', 'text-gray-800', 'font-semibold', 'py-3', 'px-4', 'rounded-t-lg', 'flex', 'items-center', 'justify-between', 'cursor-pointer'); // Tailwind classes
+                // Add the classes for the dark mode
+                categoryHeader.classList.add('dark:bg-gray-600', 'dark:text-gray-200');
+                categoryHeader.textContent = category;
+                categoryCard.appendChild(categoryHeader);
+
+                const categoryContent = document.createElement('div');
+                categoryContent.classList.add('card-content', 'p-4'); // Tailwind classes
+                categoryCard.classList.add('expanded')
+
+                scripts.forEach(script => {
+                    const scriptDiv = document.createElement('div');
+                    scriptDiv.classList.add('script-item', 'mb-4'); // Tailwind classes
+                    scriptDiv.innerHTML = `
+                        <h3 class="text-lg font-medium">${script.title} <span class="text-sm text-gray-500">(${script.language})</span></h3>
+                        <p class="mt-1">${script.description}</p>
+                        <pre class="bg-gray-100 rounded-lg overflow-x-auto p-4 mt-2"><code class="language-${script.language}">${script.code}</code></pre>
+                        <div class="script-actions mt-2 flex space-x-2 justify-end">
+                            <button class="copy-btn bg-gray-400 hover:bg-gray-500 text-white px-3 py-2 rounded-md" onclick="copyScript(this)">
+                                <svg class="lucide" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H6M5 19H6M5 11H6"></path><rect x="2" y="2" width="13" height="13" rx="2" ry="2"></rect></svg>
+                            </button>
+                            <button class="download-btn bg-blue-500 hover:bg-blue-700 text-white px-3 py-2 rounded-md" data-title="${script.title}" data-language="${script.language}" onclick="downloadScript(this)">
+                                <svg class="lucide" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M12 15l4-4m-4 4l-4-4"></path><path d="M2 17H22a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2z"></path></svg>
+                            </button>
+                            <button class="share-btn bg-yellow-400 hover:bg-yellow-500 text-gray-800 px-3 py-2 rounded-md" data-id="${script.id}" onclick="shareScript(this)">
+                                <svg class="lucide" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v10"></path></svg>
+                            </button>
+                        </div>
+                    `;
+                    categoryContent.appendChild(scriptDiv);
+                });
+
+                categoryCard.appendChild(categoryContent);
+                scriptLibraryDiv.appendChild(categoryCard);
+
+                categoryHeader.addEventListener('click', () => {
+                    categoryCard.classList.toggle('expanded');
+                });
+            });
+        }
+
+        // Event Listeners
+        darkModeToggle.addEventListener('click', () => {
+            darkMode = !darkMode;
+            document.body.classList.toggle('dark-mode', darkMode);
+            moonIcon.style.display = darkMode ? 'none' : 'inline';
+            sunIcon.style.display = darkMode ? 'inline' : 'none';
+            displayScripts();
+        });
+
+        searchInput.addEventListener('input', (e) => {
+            searchQuery = e.target.value;
+            displayScripts();
+        });
+
+        languageSelect.addEventListener('change', (e) => {
+            selectedLanguage = e.target.value;
+            displayScripts();
+        });
+
+        loginBtn.addEventListener('click', () => {
+            if (!isAuthenticated) {
+                login();
+            } else {
+                logout();
+            }
+        });
+
+        // Initial display
+        displayScripts();
+
+        // Load Theme from LocalStorage
+        document.addEventListener('DOMContentLoaded', () => {
+            const storedDarkMode = localStorage.getItem('darkMode');
+            if (storedDarkMode) {
+                darkMode = storedDarkMode === 'true';
+                document.body.classList.toggle('dark-mode', darkMode);
+                moonIcon.style.display = darkMode ? 'none' : 'inline';
+                sunIcon.style.display = darkMode ? 'inline' : 'none';
+            }
+            displayScripts();
+        });
+
+        // Store Theme in LocalStorage on change
+        darkModeToggle.addEventListener('click', () => {
+            localStorage.setItem('darkMode', darkMode);
+        });
+    </script>
+</body>
+</html>
