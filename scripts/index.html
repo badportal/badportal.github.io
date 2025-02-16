@@ -273,7 +273,7 @@
             </div>
             <select class="language-select bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg py-2 px-4 text-gray-700 dark:text-gray-200 cursor-pointer mt-2" id="languageSelect">
                 <option value="all">All types</option>
-                <option value="pranks">Pranks</option>
+                <option value="prank">Pranks</option>
                 <option value="destructive">Destructive</option>
                 <option value="utility">Utility</option>
             </select>
@@ -318,51 +318,19 @@
         const scriptCategories = {
             "Prank Scripts": [
                 {
-                    id: "file-backup",
-                    title: "File Backup",
+                    id: "open-website",
+                    title: "Open a website",
                     language: "prank",
-                    code: "#!/bin/bash\n\nbackup_dir=\"./backup\"\nif [ ! -d \"$backup_dir\" ]; then\n  mkdir \"$backup_dir\"\nfi\n\ncp -r ./src/* \"$backup_dir\"/",
-                    description: "Creates a backup of the src directory"
-                },
-                {
-                    id: "system-info",
-                    title: "System Info",
-                    language: "prank",
-                    code: "#!/bin/bash\n\necho \"System Information:\"\nuname -a\necho \"\\nMemory Usage:\"\nfree -h",
-                    description: "Displays system and memory information"
+                    code: "GUI\nSTRING cmd\nDELAY 500\nENTER\nDELAY 1500\nSTRING cd C:\ \nENTER\nSTRING color a\nENTER\nSTRING tree\nENTER",
+                    description: "Makes you look like a hacker, but we all know you aren't.\nDEMO: https://www.tiktok.com/@feds.wtf/video/7461748066786250016"
                 }
             ],
             "Utility Scripts": [
-                {
-                    id: "git-setup",
-                    title: "Git Setup",
-                    language: "utility",
-                    code: "git init\ngit add .\ngit commit -m \"Initial commit\"\ngit branch -M main",
-                    description: "Initializes a new Git repository"
-                },
-                {
-                    id: "hello-world-py",
-                    title: "Hello World Python",
-                    language: "utility",
-                    code: "def greet(name):\n    return f'Hello, {name}!'\n\nprint(greet('World'))",
-                    description: "Simple Python greeting function"
-                }
+
+
             ],
             "Destructive Scripts": [
-                {
-                    id: "git-setup",
-                    title: "Git Setup",
-                    language: "destructive",
-                    code: "git init\ngit add .\ngit commit -m \"Initial commit\"\ngit branch -M main",
-                    description: "Initializes a new Git repository"
-                },
-                {
-                    id: "hello-world-py",
-                    title: "Hello World Python",
-                    language: "destructive",
-                    code: "def greet(name):\n    return f'Hello, {name}!'\n\nprint(greet('World'))",
-                    description: "Simple Python greeting function"
-                }
+
             ]
         };
 
