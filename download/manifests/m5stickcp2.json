@@ -1,12 +1,12 @@
 {
-  "name": "SignalX for M5Stick",
+  "name": "SignalX for the M5StickCP2",
   "version": "1.0.0",
   "home_assistant_domain": "SignalX",
   "builds": [
     {
       "chipFamily": "ESP32",
       "parts": [
-        { "path": "m5stickcp2.bin", "offset": 0 }
+        { "path": "/bins/m5stickcp2.bin", "offset": 0 }
       ]
     }
   ]
