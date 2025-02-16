@@ -1,6 +1,7 @@
 Credits:
-- Sgtflixy – WebFlasher, General fixes and Backend 
+
 - 4bduul – Frontend
+- Sgtflixy – Frontend and Backend 
 ____________________________________________________________________________
 
 MIT License
