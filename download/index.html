@@ -167,6 +167,7 @@
                             <option value="none">-- Select Device --</option>
                             <option value="flipper">Flipper Zero [COMING SOON]</option>
                             <option value="m5stick">M5StickC Plus2 [WORKING]</option>
+			    <option value="m5stickheadless">M5StickC Plus2 Headless [COMING SOON]</option>
                             <option value="cyd">CYD ESP32 [COMING SOON]</option>
                             <option value="generic">Generic ESP32 [WORKING]</option>
                         </select>
@@ -202,10 +203,11 @@
 
     <script>
     const manifestUrls = {
-        "flipper": "https://mastrpcs.github.io/flash/signalx/flipper.json",
-        "m5stick": "https://mastrpcs.github.io/flash/signalx/m5stick.json",
-        "cyd": "https://mastrpcs.github.io/flash/signalx/cyd.json",
-        "generic": "https://mastrpcs.github.io/flash/signalx/generic.json"
+        "flipper": "/manifests/flipper.json",
+        "m5stick": "/manifests/m5stickcp2.json",
+	"m5stickheadless": "/manifests/m5stickcp2.json",
+        "cyd": "/manifests/cyd.json",
+        "generic": "/manifests/esp.json"
     };
 
     document.addEventListener("DOMContentLoaded", function () {
