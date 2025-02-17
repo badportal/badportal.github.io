@@ -191,12 +191,13 @@
                     <div class="device-selector">
                         <label for="device">Select Your Device:</label>
                         <select id="device" class="device-select">
+			    <option value="m5stick">M5StickC Plus2 [WORKING]</option>
+			    <option value="m5stickheadless">M5StickC Plus2 Headless [COMING SOON]</option>
                             <option value="none">-- Select Device --</option>
                             <option value="flipper">Flipper Zero [COMING SOON]</option>
-                            <option value="m5stick">M5StickC Plus2 [WORKING]</option>
-			    <option value="m5stickheadless">M5StickC Plus2 Headless [COMING SOON]</option>
+			    <option value="lilygotembedcc1101">LilyGO T-Embed CC1101 [COMING SOON]</option>
                             <option value="cyd">CYD ESP32 [COMING SOON]</option>
-                            <option value="generic">Generic ESP32 [WORKING]</option>
+                            <option value="generic">Generic ESP32 [COMING SOON]</option>
                         </select>
                     </div>
 
@@ -250,6 +251,7 @@
     const manifestUrls = {
         "flipper": "./manifests/flipper.json",
         "m5stick": "./manifests/m5stickcp2.json",
+	"lilygotembedcc1101": "./manifests/lilygotembedcc1101.json",
 	"m5stickheadless": "./manifests/m5stickcp2h.json",
         "cyd": "./manifests/cyd.json",
         "generic": "./manifests/esp.json"
