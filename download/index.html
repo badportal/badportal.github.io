@@ -192,13 +192,11 @@
                         <label for="device">Select Your Device:</label>
                         <select id="device" class="device-select">
                             <option value="none">-- Select Device --</option>
-			    <option value="m5stickcp2">M5StickC Plus2 [WORKING]</option>
-			    <option value="m5stickheadless">M5StickC Plus2 Headless [COMING SOON]</option>
                             <option value="flipper">Flipper Zero [COMING SOON]</option>
-			    <option value="generic">Generic ESP32 [COMING SOON]</option>
+                            <option value="m5stick">M5StickC Plus2 [WORKING]</option>
+			    <option value="m5stickheadless">M5StickC Plus2 Headless [COMING SOON]</option>
                             <option value="cyd">CYD ESP32 [COMING SOON]</option>
-			    <option value="lilygo-tembed-cc1101">LilyGO T-Embed CC1101 [COMING SOON]</option>
-                            
+                            <option value="generic">Generic ESP32 [WORKING]</option>
                         </select>
                     </div>
 
@@ -251,11 +249,10 @@
     <script>
     const manifestUrls = {
         "flipper": "./manifests/flipper.json",
-        "m5stickcp2": "https://signalx.ddns.net/download/manifests/m5stickcp2.json",
-	"m5stickheadless": "https://signalx.ddns.net/download/manifests/m5stickcp2h.json",
-        "cyd": "https://signalx.ddns.net/download/manifests/cyd.json",
-        "generic": "https://signalx.ddns.net/download/manifests/esp.json"
-	"lilygo-tembed-cc1101": "https://signalx.ddns.net/download/manifests/lilygotembedcc1101.json"
+        "m5stick": "./manifests/m5stickcp2.json",
+	"m5stickheadless": "./manifests/m5stickcp2h.json",
+        "cyd": "./manifests/cyd.json",
+        "generic": "./manifests/esp.json"
     };
 
     document.addEventListener("DOMContentLoaded", function () {
