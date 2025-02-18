@@ -324,56 +324,11 @@
                     code: "GUI\nSTRING cmd\nDELAY 500\nENTER\nDELAY 1500\nSTRING cd C:\ \nENTER\nSTRING color a\nENTER\nSTRING tree\nENTER",
                     description: "Makes you look like a hacker, but we all know you aren't.\nDEMO: https://www.tiktok.com/@feds.wtf/video/7461748066786250016"
                 },
-                                {
+                {
                     id: "slight-scare",
                     title: "Slight Scare Script",
                     language: "prank",
-                    code: """REM Made by CyberScripter
-DELAY 500
-GUI r
-DELAY 200
-STRING notepad
-ENTER
-DELAY 500
-STRING You shouldn't have done that...
-ENTER
-DELAY 500
-STRING But it's too late now.
-ENTER
-DELAY 500
-STRING Watch this.
-ENTER
-DELAY 1000
-
-REM Start opening calculators repeatedly
-LOOP 5
-    GUI r
-    DELAY 200
-    STRING calc
-    ENTER
-    DELAY 300
-ENDLOOP
-
-REM Open and close Command Prompt multiple times
-LOOP 3
-    GUI r
-    DELAY 200
-    STRING cmd
-    ENTER
-    DELAY 500
-    STRING exit
-    ENTER
-    DELAY 300
-ENDLOOP
-
-REM Open Notepad again for dramatic effect
-GUI r
-DELAY 200
-STRING notepad
-ENTER
-DELAY 500
-STRING Just kidding! Or am I...?
-ENTER""",
+                    code: "REM Made by CyberScripter\nDELAY 500\nGUI r\nDELAY 200\nSTRING notepad\nENTER\nDELAY 500\nSTRING You shouldn't have done that...\nENTER\nDELAY 500\nSTRING But it's too late now.\nENTER\nDELAY 500\nSTRING Watch this.\nENTER\nDELAY 1000\nREM Start opening calculators repeatedly\nLOOP 5\n   GUI r\n   DELAY 200\n   STRING calc\n   ENTER\n   DELAY 300\nENDLOOP\nREM Open and close Command Prompt multiple times\nLOOP 3\n  GUI r\nDELAY 200\n  STRING cmd\n  ENTER\n  DELAY 500\n  STRING exit\n  ENTER\n  DELAY 300\nENDLOOP\nREM Open Notepad again for dramatic effect\nGUI r\nDELAY 200\nSTRING notepad\nENTER\nDELAY 500\nSTRING Just kidding! Or am I...?\nENTER",
                     description: "This script is made to scare your victims"
                 }
             ],
