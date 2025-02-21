@@ -1,0 +1,13 @@
+{
+  "name": "SignalX for the M5StickCP",
+  "version": "1.0.0",
+  "home_assistant_domain": "SignalX",
+  "builds": [
+    {
+      "chipFamily": "ESP32",
+      "parts": [
+        { "path": "https://signalx.ddns.net/download/manifests/bins/m5stickcp.bin", "offset": 0 }
+      ]
+    }
+  ]
+}
