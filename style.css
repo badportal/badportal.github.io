@@ -318,6 +318,62 @@ body {
     margin-bottom: 1.5rem;
 }
 
+.about-section {
+    padding: 6rem 1rem;
+    background-color: var(--bg-darker);
+}
+
+.about-content {
+    max-width: 1280px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.about-content h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+}
+
+.about-content h2 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.about-content p {
+    color: var(--text-gray);
+    font-size: 1.25rem;
+    line-height: 1.8;
+    margin-bottom: 2rem;
+}
+
+.about-content ul {
+    list-style-type: none;
+    padding-left: 0;
+    color: var(--text-gray);
+    font-size: 1.25rem;
+}
+
+.about-content li {
+    margin-bottom: 1rem;
+}
+
+.warning-box {
+    background-color: rgba(220, 38, 38, 0.1);
+    border: 1px solid rgba(220, 38, 38, 0.2);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-top: 2rem;
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.warning-box svg {
+    color: #dc2626;
+    flex-shrink: 0;
+}
+
 .learn-more {
     color: var(--primary-color);
     font-weight: 500;
