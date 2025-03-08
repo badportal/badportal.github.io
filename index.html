@@ -20,6 +20,205 @@
     <meta name="color-scheme" content="dark light" />
     <link rel="stylesheet" href="style.css">
     <script type="module" src="https://unpkg.com/esp-web-tools@9.1.2/dist/web/install-button.js?module"></script>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+
+        nav {
+            background-color: #333;
+            padding: 1rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .logo-icon {
+            margin-right: 0.5rem;
+        }
+
+        .navbar .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #fff;
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .nav-links a:hover {
+            color: #f0a500;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #7f7fd5, #86a8e7);
+            padding: 100px 0;
+            text-align: center;
+            color: #fff;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+        }
+
+        .hero span {
+            color: #f0a500;
+        }
+
+        .hero-buttons a {
+            margin: 15px;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #f0a500;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background-color: #e09e00;
+        }
+
+        .btn-secondary {
+            background-color: #444;
+            color: #fff;
+        }
+
+        .btn-secondary:hover {
+            background-color: #333;
+        }
+
+        .features {
+            padding: 60px 0;
+            background-color: #fff;
+            text-align: center;
+        }
+
+        .feature-card {
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-icon {
+            margin-bottom: 15px;
+        }
+
+        .card-icon svg {
+            width: 50px;
+            height: 50px;
+            fill: #444;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            font-size: 1rem;
+            color: #777;
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .social-links a {
+            margin: 0 10px;
+            color: #fff;
+            transition: color 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: #f0a500;
+        }
+
+        .footer-links a {
+            color: #fff;
+            margin: 0 10px;
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
+            color: #f0a500;
+        }
+
+        .copyright {
+            font-size: 0.9rem;
+            color: #bbb;
+            margin-top: 20px;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .nav-links.active {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                background-color: #333;
+                position: absolute;
+                top: 60px;
+                right: 0;
+                width: 100%;
+                padding: 20px 0;
+            }
+
+            .nav-links a {
+                margin: 10px 0;
+                font-size: 1.2rem;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-buttons a {
+                font-size: 1rem;
+                padding: 12px 24px;
+            }
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar">
@@ -129,6 +328,10 @@
         </div>
     </footer>
 
-    <script src="main.js"></script>
+    <script>
+        document.querySelector(".mobile-menu-btn").addEventListener("click", function() {
+            document.querySelector(".nav-links").classList.toggle("active");
+        });
+    </script>
 </body>
 </html>
