@@ -4,18 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Signal X Webflasher</title>
-    <meta name="description" content="Easily allow users to flash Signal X Firmware to their ESP-devices on the web." />
+    <meta
+      name="description"
+      content="Easily allow users to flash Signal X Firmware to their ESP-devices on the web."
+    />
     <meta name="viewport" content="width=device-width" />
+
     <meta property="og:title" content="Signal X Firmware" />
     <meta property="og:site_name" content="Signal X Firmware" />
-    <meta property="og:url" content="https://signalx.ddns.net/" />
+    <meta
+      property="og:url"
+      content="https://signalx.ddns.net/"
+    />
     <meta property="og:type" content="website" />
-    <meta property="og:description" content="" />
-    <meta property="og:image" content="https://flippertools.ddns.net/cdn/signalx.gif" />
+    <meta
+      property="og:description"
+      content=""
+    />
+    <meta
+      property="og:image"
+      content="https://flippertools.ddns.net/cdn/signalx.gif"
+    />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Signal X Webflasher" />
-    <meta name="twitter:description" content="Easily allow users to flash Signal X Firmware to their ESP-devices on the web." />
-    <meta name="twitter:image" content="https://flippertools.ddns.net/cdn/signalx.gif" />
+    <meta
+      name="twitter:description"
+      content="Easily allow users to flash Signal X Firmware to their ESP-devices on the web."
+    />
+    <meta
+      name="twitter:image"
+      content="https://flippertools.ddns.net/cdn/signalx.gif"
+    />
     <meta name="color-scheme" content="dark light" />
     <link rel="stylesheet" href="../style.css">
     <script type="module" src="https://unpkg.com/esp-web-tools@9.1.2/dist/web/install-button.js?module"></script>
@@ -45,14 +64,21 @@
         border-radius: 8px;
         box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     }
+
     .unsupported-message {
         color: red;
         font-size: 14px;
         display: none;
     }
+	.invisible {
+      visibility: hidden;
+    }
+    esp-web-install-button[install-unsupported] {
+      visibility: inherit;
+    }
     button {
-      background-color: #ADD8E6;
-      color: #1e1e1e;
+      background-color: #ADD8E6; /* blue Button Background */
+      color: #1e1e1e; /* Dark Gray Button Text Color */
       padding: 10px 20px;
       font-size: 16px;
       border: none;
@@ -61,11 +87,84 @@
       border-radius: 5px;
     }
     button:hover {
-      background-color: #0000FF;
+      background-color: ##0000FF; /* Darker blue Hover Color */
     }
+    .textbox-container {
+      margin-top: 20px;
+    }
+    label {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 5px;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ADD8E6; /* blue Border */
+      border-radius: 5px;
+      color: #1e1e1e; /* Dark Gray Text Color */
+      background-color: #111827; /* Dark Gray Background */
+    }
+    .warning {
+      color: red;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+    @media (prefers-color-scheme: dark) {
+      body {
+        background-color: #111827; /* Dark Gray Background in dark mode */
+        color: #ADD8E6; /* blue Text Color in dark mode */
+      }
+      a {
+        color: #ADD8E6; /* blue Link Color in dark mode */
+      }
+      input[type="text"] {
+        background-color: #111827; /* Dark Gray Background in dark mode */
+        color: #1e1e1e; /* Dark Gray Text Color in dark mode */
+      }
+    }
+
+      .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #1F2937; /* Dark border */
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
 </style>
+<script
+      type="module"
+      src="https://unpkg.com/@justinribeiro/lite-youtube@1.4.0/lite-youtube.js"
+    ></script>
+    <script module>
+      import(
+        // In development we import locally.
+        window.location.hostname === "localhost"
+          ? "/dist/web/install-button.js"
+          : "https://unpkg.com/esp-web-tools/dist/web/install-button.js?module"
+      );
+    </script>
 </head>
 <body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="../" class="logo">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="logo-icon">
+                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+                </svg>
+                <span>Signal X</span>
+            </a>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="../functions">Functions</a>
+                <a href="../download">Download</a>
+                <a href="../contact">Contact</a>
+            </div>
+        </div>
+    </nav>
+
     <header class="page-header">
         <div class="header-content">
             <h1>Download <span>Firmware</span></h1>
@@ -78,7 +177,6 @@
             <div class="download-card">
                 <div class="card-header">
                     <h3>Latest Release</h3>
-                    <hr style="border: 1px solid #ADD8E6;">
                     <span class="version">DEV v0.5</span>
                 </div>
                 <div class="card-content">
@@ -89,31 +187,61 @@
                         <li>Bug fixes and stability improvements</li>
                     </ul>
 
+                    <!-- Device Selector -->
                     <div class="device-selector">
                         <label for="device">Select Your Device:</label>
                         <select id="device" class="device-select">
-                            <option value="none">-- Select Device --</option>
-                            <option value="m5stickcp2">M5StickC Plus2 [WORKING]</option>
-                            <option value="m5stickcp">M5StickC Plus [WORKING]</option>
-                            <option value="m5stickheadless">M5StickC Plus2 Headless [COMING SOON]</option>
-                            <option value="esp8266">ESP8266 [WORKING]</option>
+			    <option value="none">-- Select Device --</option>
+			    <option value="m5stickcp2">M5StickC Plus2 [WORKING]</option>
+			    <option value="m5stickcp">M5StickC Plus [WORKING]</option>
+			    <option value="m5stickheadless">M5StickC Plus2 Headless [COMING SOON]</option>
+			    <option value="esp8266">ESP8266 [WORKING]</option>
+				<!--
+                            <option value="m5cardputer">M5 Cardputer [COMING SOON]</option>
+                            <option value="flipper">Flipper Zero [COMING SOON]</option>
+			    <option value="lilygotembedcc1101">LilyGO T-Embed CC1101 [COMING SOON]</option>
+			    <option value="lilygotembed">LilyGO T-Embed [COMING SOON]</option>
+                            <option value="cyd2usb">CYD ESP32 (2usb) [COMING SOON]</option>
+			    <option value="cydusbc">CYD ESP32 (usb-c) [COMING SOON]</option>
+			    <option value="5ghzdeauther">5ghz Deauther [COMING SOON]</option>
+                            <option value="generic">Generic ESP32 [COMING SOON]</option>
+				-->
                         </select>
                     </div>
 
+                    <!-- Unsupported message -->
                     <p id="unsupported-message" class="unsupported-message" style="text-align: center;">
                         Sorry, this browser does not support Web Serial. Try Google Chrome or Microsoft Edge. 
-                        <br>
+			<br>
                         <span>(P.S - iOS devices don't work)</span>
                     </p>
-                    <div style="text-align: center;">
-                        <esp-web-install-button id="install-button">
-                            <title>Flashing</title>
-                        </esp-web-install-button>
-                    </div>
+		<div style="text-align: center;">
+                    <!-- ESP Web Install Button -->
+                    <esp-web-install-button id="install-button">
+                        <title>Flashing</title>
+                    </esp-web-install-button>
+			</div>
                 </div>
             </div>
         </div>
-    </section>
+		 </section>
+	</div>
+	<div class="footer">
+  <div class="copyright" style="text-align: center;">
+    <div class="header-content">
+      <h5>
+        Flasher customized by <a href="https://github.com/sgtflixy">sgtflixy</a> 
+        <br>
+        <p>Installer powered by <a href="https://esphome.github.io/esp-web-tools/">ESP Web Tools</a> 🛠️ </p>
+      </h5>
+    </div>
+  </div>
+</div>
+
+
+
+
+
 
     <footer>
         <div class="footer-content">
@@ -129,10 +257,18 @@
 
     <script>
     const manifestUrls = {
+        "flipper": "./manifests/flipper.json",
         "m5stickcp2": "./manifests/m5stickcp2.json",
-        "m5stickcp": "./manifests/m5stickcp2.json",
-        "m5stickheadless": "./manifests/m5stickcp2h.json",
-        "esp8266": "./manifests/esp8266.json"
+	"m5stickcp": "./manifests/m5stickcp2.json",
+	"lilygotembedcc1101": "./manifests/lilygotembedcc1101.json",
+	"lilygotembed": "./manifests/lilygotembed.json",
+	"cyd2usb": "./manifests/cyd2usb.json",
+	"cydusbc": "./manifests/cydusbc.json",
+	"m5stickheadless": "./manifests/m5stickcp2h.json",
+	"esp8266": "./manifests/esp8266.json",
+        "cyd": "./manifests/cyd.json",
+        "generic": "./manifests/esp.json",
+        "m5cardputer": "./manifests/m5cardputer.json"
     };
 
     document.addEventListener("DOMContentLoaded", function () {
@@ -140,15 +276,19 @@
         const unsupportedMessage = document.getElementById("unsupported-message");
         const deviceSelect = document.getElementById("device");
 
+        // Check for Web Serial support
         if ("serial" in navigator) {
-            unsupportedMessage.style.display = "none"; 
+
+            unsupportedMessage.style.display = "none"; // Hide unsupported message
         } else {
-            installButton.style.display = "none"; 
-            unsupportedMessage.style.display = "block"; 
+            installButton.style.display = "none"; // Hide the button
+            unsupportedMessage.style.display = "block"; // Show unsupported message
         }
 
+        // Change manifest URL based on dropdown selection
         deviceSelect.addEventListener("change", function () {
             const selectedDevice = this.value;
+
             if (selectedDevice && manifestUrls[selectedDevice]) {
                 installButton.setAttribute("manifest", manifestUrls[selectedDevice]);
             } else {
@@ -156,6 +296,6 @@
             }
         });
     });
-    </script>
+</script>
 </body>
 </html>
