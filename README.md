@@ -1,7 +1,8 @@
 Credits:
-- FTWLuke – Frontend
+
 - 4bduul – Frontend
-- Sgtflixy – Frontend and Backend 
+- Sgtflixy – Frontend and Backend
+- FTWLuke – Frontend
 ____________________________________________________________________________
 
 MIT License
