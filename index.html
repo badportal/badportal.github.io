@@ -4,298 +4,97 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Signal X Network</title>
-    <meta name="description" content="Easily allow users to flash Signal X Firmware to their ESP-devices on the web." />
+    <meta
+      name="description"
+      content="Easily allow users to flash Signal X Firmware to their ESP-devices on the web."
+    />
     <meta name="viewport" content="width=device-width" />
 
     <meta property="og:title" content="Signal X Firmware" />
     <meta property="og:site_name" content="Signal X Firmware" />
-    <meta property="og:url" content="https://signalx.ddns.net/" />
+    <meta
+      property="og:url"
+      content="https://signalx.ddns.net/"
+    />
     <meta property="og:type" content="website" />
-    <meta property="og:description" content="" />
-    <meta property="og:image" content="https://flippertools.ddns.net/cdn/signalx.gif" />
+    <meta
+      property="og:description"
+      content=""/>
+    <meta
+      property="og:image"
+      content="https://flippertools.ddns.net/cdn/signalx.gif"
+    />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Signal X Webflasher" />
-    <meta name="twitter:description" content="Easily allow users to flash Signal X Firmware to their ESP-devices on the web." />
-    <meta name="twitter:image" content="https://flippertools.ddns.net/cdn/signalx.gif" />
+    <meta
+      name="twitter:description"
+      content="Easily allow users to flash Signal X Firmware to their ESP-devices on the web."
+    />
+    <meta
+      name="twitter:image"
+      content="https://flippertools.ddns.net/cdn/signalx.gif"
+    />
     <meta name="color-scheme" content="dark light" />
     <link rel="stylesheet" href="style.css">
     <script type="module" src="https://unpkg.com/esp-web-tools@9.1.2/dist/web/install-button.js?module"></script>
-
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Arial', sans-serif;
-            background-color: #f9f9f9;
-            color: #333;
-            scroll-behavior: smooth;
-        }
-
-        nav {
-            background-color: #333;
-            padding: 1rem;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            color: #fff;
-            text-decoration: none;
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-
-        .logo-icon {
-            margin-right: 0.5rem;
-        }
-
-        .navbar .nav-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .nav-links a {
-            color: #fff;
-            margin: 0 15px;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .nav-links a:hover {
-            color: #f0a500;
-        }
-
-        .hero {
-            background: linear-gradient(135deg, #7f7fd5, #86a8e7);
-            padding: 100px 0;
-            text-align: center;
-            color: #fff;
-        }
-
-        .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 20px;
-        }
-
-        .hero span {
-            color: #f0a500;
-        }
-
-        .hero-buttons a {
-            margin: 15px;
-            padding: 15px 30px;
-            text-decoration: none;
-            border-radius: 5px;
-            font-size: 1.2rem;
-            transition: background-color 0.3s ease;
-        }
-
-        .btn-primary {
-            background-color: #f0a500;
-            color: #fff;
-        }
-
-        .btn-primary:hover {
-            background-color: #e09e00;
-        }
-
-        .btn-secondary {
-            background-color: #444;
-            color: #fff;
-        }
-
-        .btn-secondary:hover {
-            background-color: #333;
-        }
-
-        .features {
-            padding: 60px 0;
-            background-color: #fff;
-            text-align: center;
-        }
-
-        .feature-card {
-            background-color: #f9f9f9;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 20px;
-            text-align: center;
-            transition: transform 0.3s ease;
-        }
-
-        .feature-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .card-icon {
-            margin-bottom: 15px;
-        }
-
-        .card-icon svg {
-            width: 50px;
-            height: 50px;
-            fill: #444;
-        }
-
-        .feature-card h3 {
-            font-size: 1.5rem;
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .feature-card p {
-            font-size: 1rem;
-            color: #777;
-        }
-
-        footer {
-            background-color: #333;
-            color: #fff;
-            padding: 40px 0;
-            text-align: center;
-        }
-
-        .social-links a {
-            margin: 0 10px;
-            color: #fff;
-            transition: color 0.3s ease;
-        }
-
-        .social-links a:hover {
-            color: #f0a500;
-        }
-
-        .footer-links a {
-            color: #fff;
-            margin: 0 10px;
-            text-decoration: none;
-        }
-
-        .footer-links a:hover {
-            color: #f0a500;
-        }
-
-        .copyright {
-            font-size: 0.9rem;
-            color: #bbb;
-            margin-top: 20px;
-        }
-
-        /* Mobile responsiveness */
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-
-            .mobile-menu-btn {
-                display: block;
-            }
-
-            .nav-links.active {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                background-color: #333;
-                position: absolute;
-                top: 60px;
-                right: 0;
-                width: 100%;
-                padding: 20px 0;
-            }
-
-            .nav-links a {
-                margin: 10px 0;
-                font-size: 1.2rem;
-            }
-
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-
-            .hero-buttons a {
-                font-size: 1rem;
-                padding: 12px 24px;
-            }
-        }
-    </style>
 </head>
 <body>
     <nav class="navbar">
         <div class="nav-content">
             <a href="/" class="logo">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="logo-icon">
-                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
-                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="logo-icon"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
                 <span>Signal X</span>
             </a>
             <button class="mobile-menu-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="4" y1="12" x2="20" y2="12"></line>
-                    <line x1="4" y1="6" x2="20" y2="6"></line>
-                    <line x1="4" y1="18" x2="20" y2="18"></line>
-                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg>
             </button>
             <div class="nav-links">
                 <a href="/">Home</a>
                 <a href="/functions">Functions</a>
                 <a href="/download">Download</a>
                 <a href="/contact">Contact</a>
-                <a href="/about">About Us</a>
+                <a href="/about">About Us</a> <!-- Added About Us link here -->
             </div>
         </div>
     </nav>
-
     <section class="hero">
         <div class="hero-content">
             <h1>Signal X <span>Firmware</span></h1>
             <p>Advanced signal processing and penetration testing platform</p>
             <div class="hero-buttons">
                 <a href="/download" class="btn btn-primary">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                     Download Now
                 </a>
                 <a href="/functions" class="btn btn-secondary">Learn More</a>
             </div>
         </div>
     </section>
-
     <section class="features">
         <div class="features-content">
             <h2>Advanced Features</h2>
             <p>Explore the powerful capabilities of Signal X Firmware</p>
+            
             <div class="feature-cards">
                 <div class="feature-card">
                     <div class="card-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
-                            <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
-                            <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
-                            <line x1="12" y1="20" x2="12.01" y2="20"></line>
-                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"></path><path d="M1.42 9a16 16 0 0 1 21.16 0"></path><path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path><line x1="12" y1="20" x2="12.01" y2="20"></line></svg>
                     </div>
                     <h3>WiFi Tools</h3>
                     <p>Advanced WiFi scanning, deauthentication attacks, and evil portal capabilities.</p>
                 </div>
+                
                 <div class="feature-card">
                     <div class="card-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="2"></circle>
-                            <path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"></path>
-                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"></circle><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"></path></svg>
                     </div>
                     <h3>IR Control</h3>
                     <p>Comprehensive IR database and brute-force capabilities for device control.</p>
                 </div>
+                
                 <div class="feature-card">
                     <div class="card-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
-                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
                     </div>
                     <h3>Future Ready</h3>
                     <p>Expandable platform ready for RF, RFID, NFC, and BLE implementations.</p>
@@ -303,19 +102,14 @@
             </div>
         </div>
     </section>
-
     <footer>
         <div class="footer-content">
             <div class="social-links">
                 <a href="https://github.com" class="social-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
-                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
                 </a>
                 <a href="https://twitter.com" class="social-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path>
-                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path></svg>
                 </a>
             </div>
             <div class="footer-links">
@@ -328,10 +122,6 @@
         </div>
     </footer>
 
-    <script>
-        document.querySelector(".mobile-menu-btn").addEventListener("click", function() {
-            document.querySelector(".nav-links").classList.toggle("active");
-        });
-    </script>
+    <script src="main.js"></script>
 </body>
 </html>
