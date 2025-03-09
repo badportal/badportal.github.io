@@ -222,7 +222,16 @@
                     language: "prank",
                     code: "REM Made by CyberScripter\nDELAY 500\nGUI r\nDELAY 200\nSTRING notepad\nENTER\nDELAY 500\nSTRING You shouldn't have done that...\nENTER\nDELAY 500\nSTRING But it's too late now.\nENTER\nDELAY 500\nSTRING Watch this.\nENTER\nDELAY 1000\nREM Start opening calculators repeatedly\nLOOP 5\n   GUI r\n   DELAY 200\n   STRING calc\n   ENTER\n   DELAY 300\nENDLOOP\nREM Open and close Command Prompt multiple times\nLOOP 3\n  GUI r\nDELAY 200\n  STRING cmd\n  ENTER\n  DELAY 500\n  STRING exit\n  ENTER\n  DELAY 300\nENDLOOP\nREM Open Notepad again for dramatic effect\nGUI r\nDELAY 200\nSTRING notepad\nENTER\nDELAY 500\nSTRING Just kidding! Or am I...?\nENTER",
                     description: "This script is made to scare your victims"
+                },
+                {
+    id: "pc-speaks",
+    title: "PC Speaks",
+    language: "prank",
+    code: "DELAY 750\nWINDOWS d\nDELAY 950\nWINDOWS r\nDELAY 650\nSTRING powershell.exe -nop -win hidden -c \"Add-Type -AssemblyName System.speech; $synth = New-Object System.Speech.Synthesis.SpeechSynthesizer; $synth.Speak('Hello you behind the Screen, I am inside your PC.')\"\nDELAY 100\nENTER",
+    description: "Makes your PC speak a message as if it's inside your computer"
                 }
+                
+                
             ],
             "Utility Scripts": [],
             "Destructive Scripts": [
