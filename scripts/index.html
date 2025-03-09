@@ -233,7 +233,15 @@
                 
                 
             ],
-            "Utility Scripts": [],
+            "Utility Scripts": [
+                {
+    id: "win-shutdown",
+    title: "Windows Shutdown",
+    language: "utility",
+    code: "DELAY 750\nWINDOWS r\nDELAY 500\nSTRING shutdown /s /f /t 0\nENTER",
+    description: "Shuts down the computer immediately using the shutdown command."
+                },
+            ],
             "Destructive Scripts": [
                 {
                     id: "backdoor",
