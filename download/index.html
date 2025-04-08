@@ -942,13 +942,22 @@
                         <li>Performance optimizations</li>
                         <li>Bug fixes and stability improvements</li>
                     </ul>
+			<label for="device">Select Your Plan:</label>
+
+         <div class="switch">
+      <input type="radio" name="version" id="latest" value="Last" checked onclick="toggleCategory('wip',0)" />
+      <label for="latest">Latest Release</label>
+      <input type="radio" name="version" id="beta" value="Beta" onclick="toggleCategory('wip',1)" />
+      <label for="beta">Diamond Plan</label>
+    </div>
+</div>
 					<label for="device">Select Your Device:</label>	
                     <!-- Device Selector -->
                     <div class="device-selector">
                         
                        
 
-                    <!-- Unsupported message -->
+
 
                     </p>
 		<div style="text-align: center;">
@@ -1022,7 +1031,9 @@
     <script type="module" src="https://unpkg.com/esp-web-tools@8.0.1/dist/web/install-button.js?module"></script>
     <script>
 function downloadFile(file) {
-    
+        const baseUrl = betaSelected 
+        ? "https://signalx.ddns.net/download/manifests/diamond/" 
+        : "https://signalx.ddns.net/download/manifests/";
     const baseUrl = "https://signalx.ddns.net/download/manifests/"; 
     
     // Monta a URL final do arquivo
