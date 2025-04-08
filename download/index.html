@@ -1052,6 +1052,50 @@ esp-web-install-button button:hover {
     <script src="scripts/active.js"></script>
     <script type="module" src="https://unpkg.com/esp-web-tools@8.0.1/dist/web/install-button.js?module"></script>
     <script>
+async function validateLicenseKey() {
+  const licenseKey = document.getElementById('license-key').value.trim();
+  const statusElement = document.getElementById('license-status');
+  
+  if (!licenseKey) {
+    statusElement.textContent = 'Please enter a license key';
+    statusElement.style.color = '#FF4C4C';
+    isLicenseValid = false;
+    updateInstallButtonVisibility();
+    return;
+  }
+  
+  statusElement.textContent = 'Validating...';
+  statusElement.style.color = '#FFF';
+  
+  try {
+    console.log('Attempting to validate key:', licenseKey);
+    const response = await fetch(`https://files.fedswtf.xyz/checkkey?key=${encodeURIComponent(licenseKey)}`);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    console.log('Validation response:', data);
+    
+    if (data.valid === true) {
+      statusElement.textContent = 'License key valid! You have access to Diamond Plan.';
+      statusElement.style.color = '#4CAF50';
+      isLicenseValid = true;
+    } else {
+      statusElement.textContent = 'Invalid license key. Please try again or purchase a key.';
+      statusElement.style.color = '#FF4C4C';
+      isLicenseValid = false;
+    }
+  } catch (error) {
+    console.error('Detailed license validation error:', error);
+    statusElement.textContent = `Error: ${error.message || 'Could not validate license'}`;
+    statusElement.style.color = '#FF4C4C';
+    isLicenseValid = false;
+  }
+  
+  updateInstallButtonVisibility();
+}
     // Global variables for license status
     let isPremiumPlan = false;
     let isLicenseValid = false;
