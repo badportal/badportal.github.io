@@ -3,6 +3,7 @@ Credits:
 - 4bduul – Frontend
 - Sgtflixy – Frontend and Backend
 - FTWLuke – Frontend
+- CyberScripter - Frontend and Backend
 ____________________________________________________________________________
 
 MIT License
