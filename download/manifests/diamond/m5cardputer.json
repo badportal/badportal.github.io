@@ -1,0 +1,13 @@
+{
+  "name": "SignalX for the M5Cardputer",
+  "version": "1.0.0",
+  "home_assistant_domain": "SignalX",
+  "builds": [
+    {
+      "chipFamily": "ESP32",
+      "parts": [
+        { "path": "./bins/m5cardputer.bin", "offset": 0 }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "name": "SignalX for the ESP8266",
+  "version": "1.0.0",
+  "home_assistant_domain": "SignalX",
+  "builds": [
+    {
+      "chipFamily": "ESP8266",
+      "parts": [
+        { "path": "./bins/esp8266.bin", "offset": 0 }
+      ]
+    }
+  ]
+}
