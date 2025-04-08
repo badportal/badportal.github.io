@@ -4,41 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Signal X Webflasher</title>
-    <meta
-      name="description"
-      content="Easily allow users to flash Signal X Firmware to their ESP-devices on the web."
-    />
+    <meta name="description" content="Easily allow users to flash Signal X Firmware to their ESP-devices on the web."/>
     <meta name="viewport" content="width=device-width" />
-
     <meta property="og:title" content="Signal X Firmware" />
     <meta property="og:site_name" content="Signal X Firmware" />
-    <meta
-      property="og:url"
-      content="https://signalx.ddns.net/"
-    />
+    <meta property="og:url" content="https://signalx.ddns.net/"/>
     <meta property="og:type" content="website" />
-    <meta
-      property="og:description"
-      content=""
-    />
-    <meta
-      property="og:image"
-      content="https://flippertools.ddns.net/cdn/signalx.gif"
-    />
+    <meta property="og:description" content="" />
+    <meta property="og:image" content="https://flippertools.ddns.net/cdn/signalx.gif" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Signal X Webflasher" />
-    <meta
-      name="twitter:description"
-      content="Easily allow users to flash Signal X Firmware to their ESP-devices on the web."
-    />
-    <meta
-      name="twitter:image"
-      content="https://flippertools.ddns.net/cdn/signalx.gif"
-    />
+    <meta name="twitter:description" content="Easily allow users to flash Signal X Firmware to their ESP-devices on the web." />
+    <meta name="twitter:image" content="https://flippertools.ddns.net/cdn/signalx.gif" />
     <meta name="color-scheme" content="dark light" />
-    <link rel="stylesheet" href="../style.css">
     <script type="module" src="https://unpkg.com/esp-web-tools@9.1.2/dist/web/install-button.js?module"></script>
-
+    <script module>
+      import(
+        window.location.hostname === "localhost"
+          ? "/dist/web/install-button.js"
+          : "https://unpkg.com/esp-web-tools/dist/web/install-button.js?module"
+      );
+    </script>
 <style>
     body {
         font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, sans-serif;
@@ -934,19 +920,8 @@ esp-web-install-button button:hover {
         text-align: center;
     }
 </style>
-<script
-      type="module"
-      src="https://unpkg.com/@justinribeiro/lite-youtube@1.4.0/lite-youtube.js"
-    ></script>
-    <script module>
-      import(
-        // In development we import locally.
-        window.location.hostname === "localhost"
-          ? "/dist/web/install-button.js"
-          : "https://unpkg.com/esp-web-tools/dist/web/install-button.js?module"
-      );
-    </script>
 </head>
+	
 <body>
     <nav class="navbar">
         <div class="nav-content">
@@ -979,92 +954,86 @@ esp-web-install-button button:hover {
                     <h3>Latest Release</h3>
                     <span class="version">DEV v0.5</span>
                 </div>
-		    <div class="download-card">
+                <div class="download-card">
+                    <div class="card-content">
+                        <ul class="release-notes">
+                            <li>Enhanced WiFi scanning capabilities</li>
+                            <li>Improved IR database with 1000+ new devices</li>
+                            <li>Performance optimizations</li>
+                            <li>Bug fixes and stability improvements</li>
+                        </ul>
+                        <label for="device">Select Your Plan:</label>
 
-                <div class="card-content">
-                    <ul class="release-notes">
-                        <li>Enhanced WiFi scanning capabilities</li>
-                        <li>Improved IR database with 1000+ new devices</li>
-                        <li>Performance optimizations</li>
-                        <li>Bug fixes and stability improvements</li>
-                    </ul>
-			<label for="device">Select Your Plan:</label>
+                        <!-- Updated version selection with new toggle function -->
+                        <div class="version-selection">
+                            <div style="text-align: center;">
+                                <div class="switch">
+                                    <input type="radio" name="version" id="latest" value="Last" checked onclick="togglePlan('free')" />
+                                    <label for="latest">Free Release</label>
+                                    <input type="radio" name="version" id="beta" value="Beta" onclick="togglePlan('premium')" />
+                                    <label for="beta">Diamond Plan</label>
+                                </div>
+                            </div>
+                        </div>
 
-<div class="version-selection">
-<div style="text-align: center;">
-         <div class="switch">
-      <input type="radio" name="version" id="latest" value="Last" checked onclick="toggleCategory('wip',0)" />
-      <label for="latest">Free Release</label>
-      <input type="radio" name="version" id="beta" value="Beta" onclick="toggleCategory('wip',1)" />
-      <label for="beta">Diamond Plan</label>
-    </div>
-</div>
-</div>
-					<label for="device">Select Your Device:</label>	
-                    <!-- Device Selector -->
-                    <div class="device-selector">
+                        <!-- Add license key input field - initially hidden -->
+                        <div id="license-key-container" style="display: none; margin-top: 20px; text-align: center;">
+                            <label for="license-key">Enter License Key:</label>
+                            <input type="text" id="license-key" placeholder="Enter your Diamond Plan license key" style="width: 80%; margin: 10px auto; padding: 10px; background-color: #222; color: #fff; border: 1px solid #3B82F6; border-radius: 5px;">
+                            <button id="validate-key-btn" class="btn" style="margin-top: 10px;" onclick="validateLicenseKey()">Validate Key</button>
+                            <p id="license-status" style="margin-top: 10px; font-size: 14px;"></p>
+                        </div>
                         
-                       
+                        <label for="device">Select Your Device:</label>	
+                        <!-- Device Selector -->
+                        <div class="device-selector">
+                            <div style="text-align: center;">
+                                <div class="device-selection">
+                                    <button class="device-button" onclick="toggleDeviceCategory('m5stack')">M5Stack</button>
+                                    <button class="device-button" onclick="toggleDeviceCategory('lilygo')">Lilygo</button> 
+                                    <!-- <button class="device-button" onclick="toggleDeviceCategory('cyd')">CYD</button> -->
+                                    <button class="device-button" onclick="toggleDeviceCategory('esp')">ESP Generic</button>
+                                    <button class="device-button" onclick="toggleDeviceCategory('headless')">Headless</button>
+                                    <button class="device-button" id="wip" onclick="toggleDeviceCategory('wip')" style="display: none">WIP</button>
+                                </div>
+                            </div>
 
-
-
-                    </p>
-		<div style="text-align: center;">
-        <div class="device-selection">
-            <button class="device-button" onclick="toggleDeviceCategory('m5stack')">M5Stack</button>
-            <button class="device-button" onclick="toggleDeviceCategory('lilygo')">Lilygo</button> 
-            <!-- <button class="device-button" onclick="toggleDeviceCategory('cyd')">CYD</button> -->
-            <button class="device-button" onclick="toggleDeviceCategory('esp')">ESP Generic</button>
-            <button class="device-button" onclick="toggleDeviceCategory('headless')">Headless</button>
-            <button class="device-button" id="wip" onclick="toggleDeviceCategory('wip')" style="display: none">WIP</button>
-        </div>
-		</div>
-        
-
-      <ul class='device-list m5stack'>
-<!-- <input type='radio' name='type' value='m5stack-cardputer' id='m5stack-cardputer' /><label for='m5stack-cardputer'>Cardputer</label> -->
-<input type='radio' name='type' value='m5stickcp' id='m5stickcp' /><label for='m5stickcp'>StickCPlus 1.1</label>
-<input type='radio' name='type' value='m5stickcp2' id='m5stickcp2' /><label for='m5stickcp2'>StickCPlus2</label>
-</ul><ul class='device-list lilygo'>
-<!--<input type='radio' name='type' value='lilygo-t-embed' id='lilygo-t-embed' /><label for='lilygo-t-embed'>Lilygo T-Embed</label> -->
-</ul>
-</ul><ul class='device-list esp'>
-<input type='radio' name='type' value='esp8266' id='esp8266' /><label for='esp8266'>ESP-8266</label>
-<!-- </ul><ul class='device-list headless'> -->
-<!-- <input type='radio' name='type' value='HEADLESS_M5STICKCP2' id='HEADLESS_M5STICKCP2' onClick="downloadFile('HEADLESS_M5STICKCP2')" /><label for='HEADLESS_M5STICKCP2'>M5Stick C Plus2</label> -->
-
-</ul>
-
-      
-    </div>
-		<div style="text-align: center;">
-			<br>
-		<esp-web-install-button id="install-button">
-			<title>Flashing</title>
-         </esp-web-install-button>
-		                     <p id="unsupported-message" class="unsupported-message" style="text-align: center;">
-                        Sorry, this browser does not support Web Serial. Try Google Chrome or Microsoft Edge. 
-			<br>
-                        <span>(P.S - iOS devices don't work)</span>
-			</div>
+                            <ul class='device-list m5stack'>
+                                <!-- <input type='radio' name='type' value='m5stack-cardputer' id='m5stack-cardputer' /><label for='m5stack-cardputer'>Cardputer</label> -->
+                                <input type='radio' name='type' value='m5stickcp' id='m5stickcp' /><label for='m5stickcp'>StickCPlus 1.1</label>
+                                <input type='radio' name='type' value='m5stickcp2' id='m5stickcp2' /><label for='m5stickcp2'>StickCPlus2</label>
+                            </ul>
+                            <ul class='device-list lilygo'>
+                                <!--<input type='radio' name='type' value='lilygo-t-embed' id='lilygo-t-embed' /><label for='lilygo-t-embed'>Lilygo T-Embed</label> -->
+                            </ul>
+                            <ul class='device-list esp'>
+                                <input type='radio' name='type' value='esp8266' id='esp8266' /><label for='esp8266'>ESP-8266</label>
+                            </ul>
+                        </div>
+                        <div style="text-align: center;">
+                            <br>
+                            <esp-web-install-button id="install-button">
+                                <title>Flashing</title>
+                            </esp-web-install-button>
+                            <p id="unsupported-message" class="unsupported-message" style="text-align: center;">
+                                Sorry, this browser does not support Web Serial. Try Google Chrome or Microsoft Edge. 
+                                <br>
+                                <span>(P.S - iOS devices don't work)</span>
+                            </p>
+                        </div>
+                    </div>
                 </div>
-				</div>
             </div>
         </div>
-		 </section>
-	</div>
-  <div class="copyright" style="text-align: center;">
-      <h5>
-        Flasher customized by <a href="https://github.com/sgtflixy">sgtflixy</a> 
-        <br>
-        <p>Installer powered by <a href="https://esphome.github.io/esp-web-tools/">ESP Web Tools</a> 🛠️ </p>
-      </h5>
-  </div>
+    </section>
 
-
-
-
-
+    <div class="copyright" style="text-align: center;">
+        <h5>
+            Flasher customized by <a href="https://github.com/sgtflixy">sgtflixy</a> 
+            <br>
+            <p>Installer powered by <a href="https://esphome.github.io/esp-web-tools/">ESP Web Tools</a> 🛠️ </p>
+        </h5>
+    </div>
 
     <footer>
         <div class="footer-content">
@@ -1077,70 +1046,181 @@ esp-web-install-button button:hover {
             </div>
         </div>
     </footer>
+    
     <script src="scripts/active.js"></script>
     <script type="module" src="https://unpkg.com/esp-web-tools@8.0.1/dist/web/install-button.js?module"></script>
     <script>
-function downloadFile(file) {
-        const baseUrl = betaSelected 
-        ? "https://signalx.ddns.net/download/manifests/diamond/" 
-        : "https://signalx.ddns.net/download/manifests/";
-    const baseUrl = "https://signalx.ddns.net/download/manifests/"; 
-    
-    // Monta a URL final do arquivo
-    const fileUrl = baseUrl + encodeURIComponent(file) + ".bin";
-    
-    // Cria um link para download
-    const link = document.createElement("a");
-    link.href = fileUrl;
-    link.download = file;
-    link.style.display = "none";
-    document.body.appendChild(link);
-    
-    // Simula o clique no link para iniciar o download
-    link.click();
-    
-    // Remove o link após o download
-    document.body.removeChild(link);
-}
-function toggleCategory(category, state) {
-  const selectedList = document.getElementById(category);
-  if(state==0) { selectedList.style.display = 'none'; }
-  else  { selectedList.style.display = 'block'; }
-  toggleDeviceCategory('none');
-  const button = document.querySelector('esp-web-install-button');
-  button.style.display = 'none';
-}
-  
-function toggleDeviceCategory(category) {
-  document.querySelectorAll('.device-list').forEach(function(list) {
-    list.style.display = 'none';
-  });
-  if(category=='none') { return; }
-  const selectedList = document.querySelector('.' + category);
-  selectedList.style.display = 'block';
+    // Global variables for license status
+    let isPremiumPlan = false;
+    let isLicenseValid = false;
+    let currentPlan = 'free';
 
-  document.querySelectorAll('.device-button').forEach(function(button) {
-    button.classList.remove('active');
-  });
-  document.getElementById(category).classList.add('active');
-}
+    // Function to toggle between free and premium plans
+    function togglePlan(plan) {
+      currentPlan = plan;
+      isPremiumPlan = (plan === 'premium');
+      const licenseContainer = document.getElementById('license-key-container');
+      const installButton = document.querySelector('esp-web-install-button');
+      
+      // Show/hide license key input based on plan
+      if (isPremiumPlan) {
+        licenseContainer.style.display = 'block';
+        // Hide install button until license is validated
+        installButton.style.display = 'none';
+        document.getElementById('wip').style.display = 'block';
+      } else {
+        licenseContainer.style.display = 'none';
+        // For free plan, we'll show the button when a device is selected
+        updateInstallButtonVisibility();
+        document.getElementById('wip').style.display = 'none';
+      }
+      
+      // Reset any currently selected device
+      document.querySelectorAll('.device-list').forEach(function(list) {
+        list.style.display = 'none';
+      });
+      
+      document.querySelectorAll('input[name="type"]').forEach(function(radio) {
+        radio.checked = false;
+      });
+    }
 
+    // Function to validate license key using the API
+    async function validateLicenseKey() {
+      const licenseKey = document.getElementById('license-key').value.trim();
+      const statusElement = document.getElementById('license-status');
+      
+      if (!licenseKey) {
+        statusElement.textContent = 'Please enter a license key';
+        statusElement.style.color = '#FF4C4C';
+        isLicenseValid = false;
+        updateInstallButtonVisibility();
+        return;
+      }
+      
+      statusElement.textContent = 'Validating...';
+      statusElement.style.color = '#FFF';
+      
+      try {
+        const response = await fetch(`https://files.fedswtf.xyz/checkkey?key=${encodeURIComponent(licenseKey)}`);
+        const data = await response.json();
+        
+        if (data.valid === true) {
+          statusElement.textContent = 'License key valid! You have access to Diamond Plan.';
+          statusElement.style.color = '#4CAF50';
+          isLicenseValid = true;
+        } else {
+          statusElement.textContent = 'Invalid license key. Please try again or purchase a key.';
+          statusElement.style.color = '#FF4C4C';
+          isLicenseValid = false;
+        }
+      } catch (error) {
+        statusElement.textContent = 'Error validating license. Please try again later.';
+        statusElement.style.color = '#FF4C4C';
+        console.error('License validation error:', error);
+        isLicenseValid = false;
+      }
+      
+      updateInstallButtonVisibility();
+    }
 
-	function updateManifest() {
-		const typeInput = document.querySelector('input[name="type"]:checked');
+    // Helper function to check if a device is selected
+    function isDeviceSelected() {
+      return document.querySelector('input[name="type"]:checked') !== null;
+    }
 
-		const type = typeInput.value;
-		const button = document.querySelector('esp-web-install-button');
-		button.manifest = `https://signalx.ddns.net//download/manifests/${type}.json`;
-		button.style.display = 'block';
-	}
+    // Function to update install button visibility based on all conditions
+    function updateInstallButtonVisibility() {
+      const installButton = document.querySelector('esp-web-install-button');
+      
+      if (currentPlan === 'free') {
+        // For free plan, only show if a device is selected
+        installButton.style.display = isDeviceSelected() ? 'block' : 'none';
+      } else {
+        // For premium plan, show only if license is valid AND a device is selected
+        installButton.style.display = (isLicenseValid && isDeviceSelected()) ? 'block' : 'none';
+      }
+    }
 
-	document.querySelectorAll('input[name="type"]').forEach(radio => 
-	  radio.addEventListener("change", updateManifest)
-	);
+    // Modified function to toggle device category
+    function toggleDeviceCategory(category) {
+      if (category === 'none') { 
+        document.querySelectorAll('.device-list').forEach(function(list) {
+          list.style.display = 'none';
+        });
+        return; 
+      }
+      
+      document.querySelectorAll('.device-list').forEach(function(list) {
+        list.style.display = 'none';
+      });
+      
+      const selectedList = document.querySelector('.' + category);
+      if (selectedList) {
+        selectedList.style.display = 'block';
+      }
 
-	updateManifest();
+      document.querySelectorAll('.device-button').forEach(function(button) {
+        button.classList.remove('active');
+      });
+      
+      const activeButton = document.querySelector(`.device-button[onclick*="${category}"]`);
+      if (activeButton) {
+        activeButton.classList.add('active');
+      }
+    }
+
+    // Update manifest function - modified to check device selection
+    function updateManifest() {
+      const typeInput = document.querySelector('input[name="type"]:checked');
+      
+      if (!typeInput) {
+        return; // No device selected
+      }
+      
+      const type = typeInput.value;
+      const button = document.querySelector('esp-web-install-button');
+      
+      // Set the manifest path - different for premium users
+      if (currentPlan === 'premium' && isLicenseValid) {
+        button.manifest = `https://signalx.ddns.net/download/manifests/diamond/${type}.json`;
+      } else {
+        button.manifest = `https://signalx.ddns.net/download/manifests/${type}.json`;
+      }
+      
+      // Update button visibility based on current conditions
+      updateInstallButtonVisibility();
+    }
+
+    // Add event listeners for radio buttons
+    document.querySelectorAll('input[name="type"]').forEach(radio => 
+      radio.addEventListener("change", updateManifest)
+    );
+
+    // Initialize default state
+    togglePlan('free');
+
+    function downloadFile(file) {
+      const baseUrl = isPremiumPlan && isLicenseValid 
+          ? "https://signalx.ddns.net/download/manifests/diamond/" 
+          : "https://signalx.ddns.net/download/manifests/";
+      
+      // Build the file URL
+      const fileUrl = baseUrl + encodeURIComponent(file) + ".bin";
+      
+      // Create a download link
+      const link = document.createElement("a");
+      link.href = fileUrl;
+      link.download = file;
+      link.style.display = "none";
+      document.body.appendChild(link);
+      
+      // Simulate click to start download
+      link.click();
+      
+      // Remove the link after download
+      document.body.removeChild(link);
+    }
     </script>
-</script>
 </body>
 </html>
