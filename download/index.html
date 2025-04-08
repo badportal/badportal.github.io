@@ -1208,7 +1208,7 @@ esp-web-install-button button:hover {
       const button = document.querySelector('esp-web-install-button');
       
       // Set the manifest path - different for premium users
-      if (currentPlan === 'premium' && isLicenseValid) {
+      if (currentPlan === 'beta' && isLicenseValid) {
         button.manifest = `https://signalx.ddns.net/download/manifests/diamond/${type}.json`;
       } else {
         button.manifest = `https://signalx.ddns.net/download/manifests/${type}.json`;
