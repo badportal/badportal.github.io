@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Signal Ducky</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://early.webawesome.com/webawesome@3.0.0-alpha.12/dist/styles/themes/default.css" />
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gotem/0.0.3/gotem.min.js" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #0e0e10;
+      font-family: 'Inter', sans-serif;
+      color: #e4e4e7;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 20vh;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #00ffb3;
+      margin-bottom: 20px;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+      left: 50%;
+    }
+
+    input, button {
+      padding: 12px 18px;
+      margin: 8px;
+      border: none;
+      border-radius: 8px;
+      background-color: #1c1c1f;
+      color: white;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    input {
+      width: 320px;
+      border: 1px solid #2e2e33;
+    }
+
+    button:hover {
+      background-color: #00ffb3;
+      color: black;
+      cursor: pointer;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(0, 255, 179, 0.4);
+    }
+
+    #output {
+      margin-top: 30px;
+      background: #1a1a1d;
+      border-radius: 10px;
+      padding: 20px;
+      max-width: 700px;
+      width: 90%;
+      box-shadow: 0 0 20px rgba(0, 255, 179, 0.1);
+      line-height: 1.6;
+    }
+
+    #output h1, #output h2, #output h3 {
+      color: #00ffb3;
+      margin-top: 1em;
+      margin-bottom: 0.5em;
+    }
+
+    #output p {
+      margin-bottom: 1em;
+      color: #d1d5db;
+    }
+
+    #output code {
+      background: #2a2a2e;
+      color: #7dd3fc;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.95em;
+    }
+
+    #output pre code {
+      display: block;
+      padding: 15px;
+      overflow-x: auto;
+      background: #2a2a2e;
+      color: #7dd3fc;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .loader {
+      border: 4px solid #1e1e1e;
+      border-top: 4px solid #00ffb3;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin-top: 20px;
+      display: none;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .animate__animated.animate__zoomInDown {
+  --animate-duration: 1s;
+    }
+    .animate__animated.animate__hinge {
+  --animate-duration: 1s;
+    }
+    .animate__animated.animate__backInDown {
+  --animate-duration: 1s;
+    }
+  </style>
+</head>
+<body>
+  <h1 class="animate__animated animate__zoomInDown">Signal Ducky</h1>
+  <input class="animate__animated animate__zoomInDown" type="text" id="prompt" placeholder="Enter your prompt...">
+  <button class="animate__animated animate__zoomInDown" onclick="generateScript()">Generate</button>
+
+  <div class="loader" id="loader"></div>
+  <div id="output" class="animate__animated animate__zoomInDown"></div>
+  <br />
+ <wa-callout variant="danger" appearance="outlined" class="animate__animated animate__zoomInDown" id="pew">
+<strong>Some code can mess up your device.
+  <br />
+  Use at your own <i>risk.</i></strong>
+</wa-callout>
+<script>
+setTimeout(() => {
+  const element = document.querySelector('#pew');
+
+  element.classList.remove('animate__zoomInDown');
+  element.classList.add('animate__animated', 'animate__hinge');
+
+  element.addEventListener('animationend', () => {
+    element.classList.remove('animate__hinge');
+    element.classList.add('animate__animated', 'animate__backInDown');
+  }, { once: true });
+}, 3000);
+</script>
+  <script type="module">
+  import 'https://early.webawesome.com/webawesome@3.0.0-alpha.12/dist/components/callout/callout.js';
+  import 'https://early.webawesome.com/webawesome@3.0.0-alpha.12/dist/components/icon/icon.js';
+  </script>
+  <script>
+  async function generateScript() {
+    const prompt = document.getElementById('prompt').value.trim();
+    const output = document.getElementById('output');
+    const loader = document.getElementById('loader');
+
+    if (!prompt) return;
+
+    output.innerHTML = '';
+    loader.style.display = 'block';
+    const finalPrompt = `Create Ducky Script based on this: ${prompt}`;
+
+    try {
+      const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(finalPrompt)}`);
+      const data = await response.text();
+
+      loader.style.display = 'none';
+
+      const htmlContent = marked.parse(data);
+      typeWriterEffect(output, htmlContent);
+    } catch (error) {
+      loader.style.display = 'none';
+      output.innerHTML = 'An error occurred. Please try again.';
+    }
+  }
+
+  function typeWriterEffect(element, htmlContent) {
+  element.innerHTML = ''; // Clear output
+  const tempElement = document.createElement('div');
+  tempElement.innerHTML = htmlContent;
+
+  const nodes = Array.from(tempElement.childNodes);
+  let index = 0;
+
+  function processNode() {
+    if (index >= nodes.length) return;
+
+    const node = nodes[index++];
+
+    if (node.nodeName === 'PRE' || node.nodeName === 'CODE') {
+      element.appendChild(node); // Instantly append code blocks
+      processNode(); // Continue to the next node immediately
+    } else if (node.nodeType === Node.TEXT_NODE) {
+      typeText(node.textContent, element, processNode);
+    } else {
+      const wrapper = document.createElement(node.nodeName);
+      // Copy attributes
+      for (let attr of node.attributes) {
+        wrapper.setAttribute(attr.name, attr.value);
+      }
+
+      element.appendChild(wrapper);
+
+      const childNodes = Array.from(node.childNodes);
+      let childIndex = 0;
+
+      function processChild() {
+        if (childIndex >= childNodes.length) {
+          processNode();
+          return;
+        }
+
+        const child = childNodes[childIndex++];
+
+        if (child.nodeName === 'PRE' || child.nodeName === 'CODE') {
+          wrapper.appendChild(child); // Instantly append code block
+          processChild();
+        } else if (child.nodeType === Node.TEXT_NODE) {
+          typeText(child.textContent, wrapper, processChild);
+        } else {
+          const childWrapper = document.createElement(child.nodeName);
+          for (let attr of child.attributes) {
+            childWrapper.setAttribute(attr.name, attr.value);
+          }
+          wrapper.appendChild(childWrapper);
+
+          // Recursively process nested children
+          const nestedNodes = Array.from(child.childNodes);
+          let nestedIndex = 0;
+
+          function processNestedChild() {
+            if (nestedIndex >= nestedNodes.length) {
+              processChild();
+              return;
+            }
+
+            const nestedChild = nestedNodes[nestedIndex++];
+            if (nestedChild.nodeName === 'PRE' || nestedChild.nodeName === 'CODE') {
+              childWrapper.appendChild(nestedChild);
+              processNestedChild();
+            } else if (nestedChild.nodeType === Node.TEXT_NODE) {
+              typeText(nestedChild.textContent, childWrapper, processNestedChild);
+            } else {
+              childWrapper.appendChild(nestedChild);
+              processNestedChild();
+            }
+          }
+
+          processNestedChild();
+        }
+      }
+
+      processChild();
+    }
+  }
+
+  processNode();
+}
+
+function typeText(text, parent, callback) {
+  let charIndex = 0;
+
+  function typeChar() {
+    if (charIndex < text.length) {
+      parent.innerHTML += text.charAt(charIndex++);
+      setTimeout(typeChar, 15); // Speed
+    } else {
+      callback();
+    }
+  }
+
+  typeChar();
+}
+</script>
+</body>
+</html>
