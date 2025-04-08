@@ -6,7 +6,7 @@
     {
       "chipFamily": "ESP32",
       "parts": [
-        { "path": "https://signalx.ddns.net/download/manifests/bins/m5stickcp2.bin", "offset": 0 }
+        { "path": "m5stickcp2.bin", "offset": 0 }
       ]
     }
   ]
