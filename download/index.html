@@ -1198,7 +1198,6 @@ esp-web-install-button button:hover {
 
     // Update manifest function - modified to check device selection
 // Update manifest function - modified to check device selection and plan type
-// Update manifest function - keeping it simple and focused
 function updateManifest() {
   const typeInput = document.querySelector('input[name="type"]:checked');
   
@@ -1209,14 +1208,14 @@ function updateManifest() {
   const type = typeInput.value;
   const button = document.querySelector('esp-web-install-button');
   
-  // Check if we should use diamond manifests
-  if (currentPlan === 'premium' && isLicenseValid) {
+  // Set the manifest path - different for premium users
+  if (isPremiumPlan && isLicenseValid) {
     button.manifest = `https://signalx.ddns.net/download/manifests/diamond/${type}.json`;
   } else {
     button.manifest = `https://signalx.ddns.net/download/manifests/${type}.json`;
   }
   
-  // Update button visibility
+  // Update button visibility based on current conditions
   updateInstallButtonVisibility();
 }
       
