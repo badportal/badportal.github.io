@@ -6,7 +6,7 @@
     {
       "chipFamily": "ESP32",
       "parts": [
-        { "path": "./bins/lilygotembedcc1101.bin", "offset": 0 }
+        { "path": "lilygotembedcc1101.bin", "offset": 0 }
       ]
     }
   ]
