@@ -1104,25 +1104,22 @@ esp-web-install-button button:hover {
       statusElement.style.color = '#FFF';
       
       try {
-  try {
 
-    // Prepend the CORS proxy URL
-
-    const proxyUrl = 'https://corsproxy.io/?';
-
-    const targetUrl = `https://files.fedswtf.xyz/checkkey?key=${encodeURIComponent(licenseKey)}`;
-
-    
-
-    const response = await fetch(proxyUrl + targetUrl);
-
-    
-
-    if (!response.ok) {
-
-      throw new Error('Network response was not ok');
-
-    }
+	    const proxyUrl = 'https://corsproxy.io/?';
+	
+	    const targetUrl = `https://files.fedswtf.xyz/checkkey?key=${encodeURIComponent(licenseKey)}`;
+	
+	    
+	
+	    const response = await fetch(proxyUrl + targetUrl);
+	
+	    
+	
+	    if (!response.ok) {
+	
+	      throw new Error('Network response was not ok');
+	
+	    }
 
 
     const data = await response.json();
