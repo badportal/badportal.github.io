@@ -1086,45 +1086,30 @@ esp-web-install-button button:hover {
         radio.checked = false;
       });
     }
-
-    // Function to validate license key using the API
-    async function validateLicenseKey() {
-      const licenseKey = document.getElementById('license-key').value.trim();
-      const statusElement = document.getElementById('license-status');
-      
-      if (!licenseKey) {
-        statusElement.textContent = 'Please enter a license key';
-        statusElement.style.color = '#FF4C4C';
-        isLicenseValid = false;
-        updateInstallButtonVisibility();
-        return;
-      }
-      
-      statusElement.textContent = 'Validating...';
-      statusElement.style.color = '#FFF';
-      
-      try {
-        const response = await fetch(`https://files.fedswtf.xyz/checkkey?key=${encodeURIComponent(licenseKey)}`);
-        const data = await response.json();
-        
-        if (data.valid === true) {
-          statusElement.textContent = 'License key valid! You have access to Diamond Plan.';
-          statusElement.style.color = '#4CAF50';
-          isLicenseValid = true;
-        } else {
-          statusElement.textContent = 'Invalid license key. Please try again or purchase a key.';
-          statusElement.style.color = '#FF4C4C';
-          isLicenseValid = false;
-        }
-      } catch (error) {
-        statusElement.textContent = 'Error validating license. Please try again later.';
-        statusElement.style.color = '#FF4C4C';
-        console.error('License validation error:', error);
-        isLicenseValid = false;
-      }
-      
-      updateInstallButtonVisibility();
+    const corsProxy = 'https://corsproxy.io/?';
+    const targetUrl = `https://files.fedswtf.xyz/checkkey?key=${encodeURIComponent(licenseKey)}`;
+    const response = await fetch(corsProxy + encodeURIComponent(targetUrl));
+    
+    const data = await response.json();
+    
+    if (data.valid === true) {
+      statusElement.textContent = 'License key valid! You have access to Diamond Plan.';
+      statusElement.style.color = '#4CAF50';
+      isLicenseValid = true;
+    } else {
+      statusElement.textContent = 'Invalid license key. Please try again or purchase a key.';
+      statusElement.style.color = '#FF4C4C';
+      isLicenseValid = false;
     }
+  } catch (error) {
+    statusElement.textContent = 'Error validating license. Please try again later.';
+    statusElement.style.color = '#FF4C4C';
+    console.error('License validation error:', error);
+    isLicenseValid = false;
+  }
+  
+  updateInstallButtonVisibility();
+}
 
     // Helper function to check if a device is selected
     function isDeviceSelected() {
