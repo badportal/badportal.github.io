@@ -6,7 +6,7 @@
     {
       "chipFamily": "ESP32",
       "parts": [
-        { "path": "/bins/cyd.bin", "offset": 0 }
+        { "path": "cyd.bin", "offset": 0 }
       ]
     }
   ]
