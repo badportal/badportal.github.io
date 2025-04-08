@@ -979,11 +979,13 @@ esp-web-install-button button:hover {
                         </div>
 
                         <!-- Add license key input field - initially hidden -->
-                        <div id="license-key-container" style="display: none; margin-top: 20px; text-align: center;">
+                        <div id="license-key-container" style="display: none; margin-top: 20px;">
                             <label for="license-key">Enter License Key:</label>
+			<div style="text-align: center;">
                             <input type="text" id="license-key" placeholder="Enter your Diamond Plan license key" style="width: 80%; margin: 10px auto; padding: 10px; background-color: #222; color: #fff; border: 1px solid #3B82F6; border-radius: 5px;">
                             <button id="validate-key-btn" class="btn" style="margin-top: 10px;" onclick="validateLicenseKey()">Validate Key</button>
                             <p id="license-status" style="margin-top: 10px; font-size: 14px;"></p>
+			</div>
                         </div>
                         
                         <label for="device">Select Your Device:</label>	
