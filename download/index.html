@@ -1054,6 +1054,7 @@ esp-web-install-button button:hover {
 <script type="module" src="https://unpkg.com/esp-web-tools@8.0.1/dist/web/install-button.js?module"></script>
 <script>
 // Global variables for license status
+// Global variables for license status
 let isLicenseValid = false;
 let currentPlan = 'free';
 let authToken = null; // Store JWT token after successful validation
@@ -1064,12 +1065,6 @@ function togglePlan(plan) {
   const licenseContainer = document.getElementById('license-key-container');
   const installButton = document.querySelector('esp-web-install-button');
   
-  // Update tab styling
-  document.querySelectorAll('.tab').forEach(function(tab) {
-    tab.classList.remove('active');
-  });
-  document.querySelector(`.tab:nth-child(${plan === 'free' ? 1 : 2})`).classList.add('active');
-  
   // Show/hide license key input based on plan
   if (plan === 'premium') {
     licenseContainer.style.display = 'block';
@@ -1078,8 +1073,6 @@ function togglePlan(plan) {
     document.getElementById('wip').style.display = 'block';
   } else {
     licenseContainer.style.display = 'none';
-    // For free plan, we'll show the button when a device is selected
-    updateInstallButtonVisibility();
     document.getElementById('wip').style.display = 'none';
     
     // Reset license status if switching to free plan
@@ -1095,6 +1088,9 @@ function togglePlan(plan) {
   document.querySelectorAll('input[name="type"]').forEach(function(radio) {
     radio.checked = false;
   });
+  
+  // Update the install button visibility
+  updateInstallButtonVisibility();
 }
 
 // Function to validate license key using your server API
@@ -1121,13 +1117,9 @@ async function validateLicenseKey() {
       body: JSON.stringify({key: licenseKey})
     });
     
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    
     const data = await response.json();
     
-    if (data.valid === true) {
+    if (response.ok && data.valid === true) {
       statusElement.textContent = 'License key valid! You have access to Diamond Plan.';
       statusElement.style.color = '#4CAF50';
       isLicenseValid = true;
@@ -1169,30 +1161,32 @@ function updateInstallButtonVisibility() {
 
 // Modified function to toggle device category
 function toggleDeviceCategory(category) {
-  if (category === 'none') { 
-    document.querySelectorAll('.device-list').forEach(function(list) {
-      list.style.display = 'none';
-    });
-    return; 
-  }
-  
+  // Hide all device lists first
   document.querySelectorAll('.device-list').forEach(function(list) {
     list.style.display = 'none';
   });
   
-  const selectedList = document.querySelector('.' + category);
-  if (selectedList) {
-    selectedList.style.display = 'block';
-  }
-
+  // Remove active class from all device buttons
   document.querySelectorAll('.device-button').forEach(function(button) {
     button.classList.remove('active');
   });
   
+  if (category === 'none') return;
+  
+  // Show the selected device list
+  const selectedList = document.querySelector('.device-list.' + category);
+  if (selectedList) {
+    selectedList.style.display = 'block';
+  }
+  
+  // Add active class to the clicked button
   const activeButton = document.querySelector(`.device-button[onclick*="${category}"]`);
   if (activeButton) {
     activeButton.classList.add('active');
   }
+  
+  // Update the install button visibility
+  updateInstallButtonVisibility();
 }
 
 // Function to get a secure manifest URL from the server
@@ -1245,18 +1239,22 @@ async function updateManifest() {
   const type = typeInput.value;
   const button = document.querySelector('esp-web-install-button');
   
-  if (currentPlan === 'premium' && isLicenseValid) {
-    // Get signed URL for premium content
-    const secureUrl = await getSecureManifestUrl(type);
-    if (secureUrl) {
-      button.manifest = secureUrl;
+  try {
+    if (currentPlan === 'premium' && isLicenseValid) {
+      // Get signed URL for premium content
+      const secureUrl = await getSecureManifestUrl(type);
+      if (secureUrl) {
+        button.manifest = secureUrl;
+      } else {
+        console.error('Failed to get secure manifest URL');
+        return;
+      }
     } else {
-      console.error('Failed to get secure manifest URL');
-      return;
+      // Free plan uses regular URLs
+      button.manifest = `https://files.fedswtf.xyz/manifests/${type}.json`;
     }
-  } else {
-    // Free plan uses regular URLs
-    button.manifest = `https://files.fedswtf.xyz/manifests/${type}.json`;
+  } catch (error) {
+    console.error('Error updating manifest:', error);
   }
   
   // Update button visibility based on current conditions
@@ -1315,13 +1313,40 @@ async function downloadFile(file) {
   }
 }
 
-// Add event listeners for radio buttons
+// Initialize everything when the DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-  document.querySelectorAll('input[name="type"]').forEach(radio => 
-    radio.addEventListener("change", updateManifest)
-  );
+  // Add event listeners for radio buttons (device selection)
+  document.querySelectorAll('input[name="type"]').forEach(function(radio) {
+    radio.addEventListener("change", function() {
+      updateManifest();
+      updateInstallButtonVisibility();
+    });
+  });
   
-  // Initialize default state
+  // Add event listeners for plan selection
+  document.getElementById('latest').addEventListener('change', function() {
+    if (this.checked) togglePlan('free');
+  });
+  
+  document.getElementById('beta').addEventListener('change', function() {
+    if (this.checked) togglePlan('premium');
+  });
+  
+  // Initialize by setting the default plan
   togglePlan('free');
+  
+  // Initially hide the install button until a device is selected
+  const installButton = document.querySelector('esp-web-install-button');
+  if (installButton) {
+    installButton.style.display = 'none';
+  }
+  
+  // Display error message if Web Serial is not supported
+  const unsupportedMessage = document.getElementById('unsupported-message');
+  if (unsupportedMessage && !('serial' in navigator)) {
+    unsupportedMessage.style.display = 'block';
+  }
 });
 </script>
+</body>
+</html>
