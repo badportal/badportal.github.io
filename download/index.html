@@ -1053,299 +1053,193 @@ esp-web-install-button button:hover {
 <script src="scripts/active.js"></script>
 <script type="module" src="https://unpkg.com/esp-web-tools@8.0.1/dist/web/install-button.js?module"></script>
 <script>
-// Global variables for license status
-// Global variables for license status
-let isLicenseValid = false;
-let currentPlan = 'free';
-let authToken = null; // Store JWT token after successful validation
+// Global state
+let authState = {
+  isAuthenticated: false,
+  token: null,
+  key: null,
+  isPremium: false
+};
 
-// Function to toggle between free and premium plans
-function togglePlan(plan) {
-  currentPlan = plan;
-  const licenseContainer = document.getElementById('license-key-container');
-  const installButton = document.querySelector('esp-web-install-button');
-  
-  // Show/hide license key input based on plan
-  if (plan === 'premium') {
-    licenseContainer.style.display = 'block';
-    // Hide install button until license is validated
-    installButton.style.display = 'none';
-    document.getElementById('wip').style.display = 'block';
-  } else {
-    licenseContainer.style.display = 'none';
-    document.getElementById('wip').style.display = 'none';
-    
-    // Reset license status if switching to free plan
-    authToken = null;
-    isLicenseValid = false;
-  }
-  
-  // Reset any currently selected device
-  document.querySelectorAll('.device-list').forEach(function(list) {
-    list.style.display = 'none';
-  });
-  
-  document.querySelectorAll('input[name="type"]').forEach(function(radio) {
-    radio.checked = false;
-  });
-  
-  // Update the install button visibility
-  updateInstallButtonVisibility();
-}
+// DOM elements
+const licenseKeyInput = document.getElementById('license-key');
+const validateBtn = document.getElementById('validate-key-btn');
+const licenseStatus = document.getElementById('license-status');
+const installButton = document.querySelector('esp-web-install-button');
 
-// Function to validate license key using your server API
+// Validate license key
 async function validateLicenseKey() {
-  const licenseKey = document.getElementById('license-key').value.trim();
-  const statusElement = document.getElementById('license-status');
-  
-  if (!licenseKey) {
-    statusElement.textContent = 'Please enter a license key';
-    statusElement.style.color = '#FF4C4C';
-    isLicenseValid = false;
-    updateInstallButtonVisibility();
+  const key = licenseKeyInput.value.trim();
+  if (!key) {
+    showLicenseStatus('Please enter a license key', 'error');
     return;
   }
-  
-  statusElement.textContent = 'Validating...';
-  statusElement.style.color = '#FFF';
-  
+
+  showLicenseStatus('Validating...', 'info');
+
   try {
-    // Securely validate the license through your server
-    const response = await fetch('https://files.fedswtf.xyz/validate-license', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({key: licenseKey})
-    });
-    
-    const data = await response.json();
-    
-    if (response.ok && data.valid === true) {
-      statusElement.textContent = 'License key valid! You have access to Diamond Plan.';
-      statusElement.style.color = '#4CAF50';
-      isLicenseValid = true;
-      authToken = data.token; // Store the JWT token for future requests
-    } else {
-      statusElement.textContent = 'Invalid license key. Please try again or purchase a key.';
-      statusElement.style.color = '#FF4C4C';
-      isLicenseValid = false;
-      authToken = null;
-    }
-  } catch (error) {
-    statusElement.textContent = 'Error validating license. Please try again later.';
-    statusElement.style.color = '#FF4C4C';
-    console.error('License validation error:', error);
-    isLicenseValid = false;
-    authToken = null;
-  }
-  
-  updateInstallButtonVisibility();
-}
-
-// Helper function to check if a device is selected
-function isDeviceSelected() {
-  return document.querySelector('input[name="type"]:checked') !== null;
-}
-
-// Function to update install button visibility based on all conditions
-function updateInstallButtonVisibility() {
-  const installButton = document.querySelector('esp-web-install-button');
-  
-  if (currentPlan === 'free') {
-    // For free plan, only show if a device is selected
-    installButton.style.display = isDeviceSelected() ? 'block' : 'none';
-  } else {
-    // For premium plan, show only if license is valid AND a device is selected
-    installButton.style.display = (isLicenseValid && isDeviceSelected()) ? 'block' : 'none';
-  }
-}
-
-// Modified function to toggle device category
-function toggleDeviceCategory(category) {
-  // Hide all device lists first
-  document.querySelectorAll('.device-list').forEach(function(list) {
-    list.style.display = 'none';
-  });
-  
-  // Remove active class from all device buttons
-  document.querySelectorAll('.device-button').forEach(function(button) {
-    button.classList.remove('active');
-  });
-  
-  if (category === 'none') return;
-  
-  // Show the selected device list
-  const selectedList = document.querySelector('.device-list.' + category);
-  if (selectedList) {
-    selectedList.style.display = 'block';
-  }
-  
-  // Add active class to the clicked button
-  const activeButton = document.querySelector(`.device-button[onclick*="${category}"]`);
-  if (activeButton) {
-    activeButton.classList.add('active');
-  }
-  
-  // Update the install button visibility
-  updateInstallButtonVisibility();
-}
-
-// Function to get a secure manifest URL from the server
-async function getSecureManifestUrl(deviceType) {
-  if (!deviceType) return null;
-  
-  try {
-    // If using free plan, return regular URL
-    if (currentPlan === 'free') {
-      return `https://files.fedswtf.xyz/manifests/${deviceType}.json`;
-    }
-    
-    // For premium plan, get signed URL from server
-    if (!isLicenseValid || !authToken) {
-      console.error('License not validated');
-      return null;
-    }
-    
-    const response = await fetch('https://files.fedswtf.xyz/get-manifest-url', {
+    const response = await fetch('/api/keys/validate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-Access-Token': authToken
       },
-      body: JSON.stringify({
-        deviceType: deviceType
-      })
+      body: JSON.stringify({ key })
     });
-    
+
     if (!response.ok) {
-      throw new Error('Failed to get secure manifest URL');
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     const data = await response.json();
-    return data.url;
+
+    if (data.valid) {
+      authState = {
+        isAuthenticated: true,
+        token: data.token,
+        key: key,
+        isPremium: true
+      };
+      showLicenseStatus('License valid! Premium features unlocked.', 'success');
+      localStorage.setItem('authToken', data.token); // Persist token
+    } else {
+      throw new Error('Invalid license key');
+    }
   } catch (error) {
-    console.error('Error fetching secure manifest URL:', error);
-    return null;
+    showLicenseStatus('Invalid license key or server error', 'error');
+    console.error('Validation error:', error);
+    authState = {
+      isAuthenticated: false,
+      token: null,
+      key: null,
+      isPremium: false
+    };
+    localStorage.removeItem('authToken'); // Clear invalid token
+  }
+
+  updateUI();
+}
+
+// Get secure manifest URL
+async function getSecureManifest(deviceType) {
+  if (!authState.isAuthenticated || !authState.token) {
+    throw new Error('Not authenticated');
+  }
+
+  const response = await fetch(`/api/manifest/${deviceType}`, {
+    headers: {
+      'Authorization': `Bearer ${authState.token}`
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to get secure manifest');
+  }
+
+  const data = await response.json();
+  
+  // Return signed URL
+  return `${data.url}?sig=${data.signature}&exp=${data.expires}`;
+}
+
+// Update manifest for install button
+async function updateManifest() {
+  const typeInput = document.querySelector('input[name="type"]:checked');
+  if (!typeInput) return;
+
+  const deviceType = typeInput.value;
+  
+  try {
+    let manifestUrl;
+    
+    if (authState.isPremium) {
+      // Get secure signed URL for premium users
+      manifestUrl = await getSecureManifest(deviceType);
+    } else {
+      // Free version - use regular URL but still protect it
+      manifestUrl = `/manifests/${deviceType}.json`;
+    }
+
+    installButton.manifest = manifestUrl;
+    installButton.style.display = 'block';
+  } catch (error) {
+    console.error('Error updating manifest:', error);
+    installButton.style.display = 'none';
   }
 }
 
-// Update manifest function - modified to use secure URLs
-async function updateManifest() {
-  const typeInput = document.querySelector('input[name="type"]:checked');
-  
-  if (!typeInput) {
-    return; // No device selected
-  }
-  
-  const type = typeInput.value;
-  const button = document.querySelector('esp-web-install-button');
-  
-  try {
-    if (currentPlan === 'premium' && isLicenseValid) {
-      // Get signed URL for premium content
-      const secureUrl = await getSecureManifestUrl(type);
-      if (secureUrl) {
-        button.manifest = secureUrl;
-      } else {
-        console.error('Failed to get secure manifest URL');
-        return;
-      }
-    } else {
-      // Free plan uses regular URLs
-      button.manifest = `https://files.fedswtf.xyz/manifests/${type}.json`;
-    }
-  } catch (error) {
-    console.error('Error updating manifest:', error);
-  }
-  
-  // Update button visibility based on current conditions
+// Helper functions
+function showLicenseStatus(message, type) {
+  licenseStatus.textContent = message;
+  licenseStatus.className = type; // CSS classes: .info, .success, .error
+}
+
+function updateUI() {
+  // Show/hide elements based on auth state
+  const premiumElements = document.querySelectorAll('.premium-only');
+  premiumElements.forEach(el => {
+    el.style.display = authState.isPremium ? 'block' : 'none';
+  });
+
+  // Update install button
   updateInstallButtonVisibility();
 }
 
-// Function to download file with secure URL if premium
-async function downloadFile(file) {
-  if (!file) return;
+function updateInstallButtonVisibility() {
+  const isDeviceSelected = document.querySelector('input[name="type"]:checked') !== null;
   
-  try {
-    let fileUrl;
-    
-    if (currentPlan === 'premium' && isLicenseValid) {
-      // For premium plan, get signed URL from server
-      if (!authToken) {
-        alert('Please validate your license key first');
-        return;
-      }
-      
-      const response = await fetch('https://files.fedswtf.xyz/get-file-url', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Access-Token': authToken
-        },
-        body: JSON.stringify({ filename: file })
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to get secure file URL');
-      }
-      
-      const data = await response.json();
-      fileUrl = data.url;
-    } else {
-      // Free version uses regular URLs
-      fileUrl = `https://files.fedswtf.xyz/manifests/${encodeURIComponent(file)}.bin`;
-    }
-    
-    // Create a download link
-    const link = document.createElement("a");
-    link.href = fileUrl;
-    link.download = file;
-    link.style.display = "none";
-    document.body.appendChild(link);
-    
-    // Simulate click to start download
-    link.click();
-    
-    // Remove the link after download
-    document.body.removeChild(link);
-  } catch (error) {
-    console.error('Error downloading file:', error);
-    alert('Error downloading file. Please try again later.');
+  if (authState.isPremium) {
+    installButton.style.display = isDeviceSelected ? 'block' : 'none';
+  } else {
+    // Free version logic
+    installButton.style.display = isDeviceSelected ? 'block' : 'none';
   }
 }
 
-// Initialize everything when the DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-  // Add event listeners for radio buttons (device selection)
-  document.querySelectorAll('input[name="type"]').forEach(function(radio) {
-    radio.addEventListener("change", function() {
-      updateManifest();
-      updateInstallButtonVisibility();
-    });
-  });
-  
-  // Add event listeners for plan selection
-  document.getElementById('latest').addEventListener('change', function() {
-    if (this.checked) togglePlan('free');
-  });
-  
-  document.getElementById('beta').addEventListener('change', function() {
-    if (this.checked) togglePlan('premium');
-  });
-  
-  // Initialize by setting the default plan
-  togglePlan('free');
-  
-  // Initially hide the install button until a device is selected
-  const installButton = document.querySelector('esp-web-install-button');
-  if (installButton) {
-    installButton.style.display = 'none';
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+  // Check for existing auth token
+  const savedToken = localStorage.getItem('authToken');
+  if (savedToken) {
+    // Verify token is still valid
+    try {
+      const decoded = jwt.decode(savedToken);
+      if (decoded && decoded.exp * 1000 > Date.now()) {
+        authState = {
+          isAuthenticated: true,
+          token: savedToken,
+          key: decoded.key,
+          isPremium: decoded.premium
+        };
+        showLicenseStatus('Welcome back! Premium features active.', 'success');
+      }
+    } catch (e) {
+      localStorage.removeItem('authToken');
+    }
   }
+
+  updateUI();
+
+  // Event listeners
+  validateBtn.addEventListener('click', validateLicenseKey);
   
-  // Display error message if Web Serial is not supported
-  const unsupportedMessage = document.getElementById('unsupported-message');
-  if (unsupportedMessage && !('serial' in navigator)) {
-    unsupportedMessage.style.display = 'block';
-  }
+  document.querySelectorAll('input[name="type"]').forEach(radio => {
+    radio.addEventListener('change', updateManifest);
+  });
+
+  // Plan selection
+  document.getElementById('latest').addEventListener('change', () => {
+    if (document.getElementById('latest').checked) {
+      authState.isPremium = false;
+      updateUI();
+    }
+  });
+  
+  document.getElementById('beta').addEventListener('change', () => {
+    if (document.getElementById('beta').checked) {
+      document.getElementById('license-key-container').style.display = 'block';
+      updateUI();
+    }
+  });
 });
 </script>
 </body>
