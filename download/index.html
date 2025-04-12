@@ -1117,41 +1117,43 @@ async function validateLicenseKey() {
   statusElement.style.color = '#FFF';
   
   try {
-    const proxyUrl = 'https://corsproxy.io/?';
-    
-    // Add device parameter to the API call if a device is selected
-    let targetUrl = `https://files.fedswtf.xyz/checkkey?key=${encodeURIComponent(licenseKey)}`;
+    // Remove the proxy and call your endpoint directly if CORS is configured
+    const url = new URL('https://files.fedswtf.xyz/checkkey');
+    url.searchParams.append('key', licenseKey);
     if (selectedDevice) {
-      targetUrl += `&device=${encodeURIComponent(selectedDevice)}`;
+      url.searchParams.append('device', selectedDevice);
     }
     
-    const response = await fetch(proxyUrl + targetUrl);
+    const response = await fetch(url);
     
     if (!response.ok) {
-      throw new Error('Network response was not ok');
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
     
     const data = await response.json();
     
-    if (data.valid === true) {
+    // Debug logging
+    console.log('Validation response:', data);
+    
+    // Check both the success flag and valid flag in response
+    if (data.success && data.valid) {
       statusElement.textContent = 'License key valid! You have access to Diamond Plan.';
       statusElement.style.color = '#4CAF50';
       isLicenseValid = true;
     } else {
-      statusElement.textContent = 'Invalid license key. Please try again or purchase a key.';
+      statusElement.textContent = data.message || 'Invalid license key. Please try again or purchase a key.';
       statusElement.style.color = '#FF4C4C';
       isLicenseValid = false;
     }
   } catch (error) {
+    console.error('License validation error:', error);
     statusElement.textContent = 'Error validating license. Please try again later.';
     statusElement.style.color = '#FF4C4C';
-    console.error('License validation error:', error);
     isLicenseValid = false;
   }
   
   updateInstallButtonVisibility();
 }
-
 // Function to get the currently selected device
 function getSelectedDevice() {
   const typeInput = document.querySelector('input[name="type"]:checked');
@@ -1281,6 +1283,161 @@ function downloadFile(file) {
   // Remove the link after download
   document.body.removeChild(link);
 }
+
+(function() {
+    'use strict';
+
+    // Original protected values
+    const protectedValues = {
+        isPremiumPlan: false,
+        isLicenseValid: false,
+        currentPlan: 'free'
+    };
+
+    // Freeze the original values to prevent modification
+    Object.freeze(protectedValues);
+
+    // Create secure getters/setters for the window variables
+    Object.defineProperties(window, {
+        'isPremiumPlan': {
+            get: () => protectedValues.isPremiumPlan,
+            set: (value) => {
+                if (!validateSecureUpdate('isPremiumPlan', value)) {
+                    console.warn('Unauthorized modification attempt detected for isPremiumPlan');
+                    return;
+                }
+                protectedValues.isPremiumPlan = value;
+                updateSecurityChecks();
+            },
+            configurable: false,
+            enumerable: true
+        },
+        'isLicenseValid': {
+            get: () => protectedValues.isLicenseValid,
+            set: (value) => {
+                if (!validateSecureUpdate('isLicenseValid', value)) {
+                    console.warn('Unauthorized modification attempt detected for isLicenseValid');
+                    return;
+                }
+                protectedValues.isLicenseValid = value;
+                updateSecurityChecks();
+            },
+            configurable: false,
+            enumerable: true
+        },
+        'currentPlan': {
+            get: () => protectedValues.currentPlan,
+            set: (value) => {
+                if (!validateSecureUpdate('currentPlan', value)) {
+                    console.warn('Unauthorized modification attempt detected for currentPlan');
+                    return;
+                }
+                protectedValues.currentPlan = value;
+                updateSecurityChecks();
+            },
+            configurable: false,
+            enumerable: true
+        }
+    });
+
+    // Track modification attempts
+    let security = {
+        lastValidUpdate: Date.now(),
+        modificationAttempts: 0,
+        lastAttempt: 0
+    };
+
+    // Validate updates come from authorized code paths
+    function validateSecureUpdate(property, value) {
+        // Get the call stack
+        const stack = new Error().stack;
+        
+        // Only allow updates from your own code files
+        const validSources = [
+            '/download/', // Your download page
+            'validateLicenseKey', // Your validation function
+            'togglePlan' // Your plan toggle function
+        ];
+        
+        // Check if the update comes from an authorized source
+        const isValidSource = validSources.some(source => stack.includes(source));
+        
+        // Rate limit updates
+        const now = Date.now();
+        if (now - security.lastAttempt < 1000) {
+            security.modificationAttempts++;
+            if (security.modificationAttempts > 3) {
+                triggerSecurityLock();
+                return false;
+            }
+        } else {
+            security.modificationAttempts = 0;
+        }
+        security.lastAttempt = now;
+        
+        return isValidSource;
+    }
+
+    // Additional security checks
+    function updateSecurityChecks() {
+        // Verify the values maintain logical consistency
+        if (protectedValues.currentPlan === 'free' && protectedValues.isPremiumPlan) {
+            protectedValues.isPremiumPlan = false;
+            protectedValues.isLicenseValid = false;
+        }
+        
+        if (!protectedValues.isPremiumPlan && protectedValues.isLicenseValid) {
+            protectedValues.isLicenseValid = false;
+        }
+    }
+
+    // Security lockdown
+    function triggerSecurityLock() {
+        console.error('SECURITY LOCKDOWN: Multiple unauthorized modification attempts detected');
+        
+        // Reset to safe state
+        protectedValues.isPremiumPlan = false;
+        protectedValues.isLicenseValid = false;
+        protectedValues.currentPlan = 'free';
+        
+        // Disable further modifications
+        Object.defineProperties(window, {
+            'isPremiumPlan': { value: false, writable: false },
+            'isLicenseValid': { value: false, writable: false },
+            'currentPlan': { value: 'free', writable: false }
+        });
+        
+        // Optional: Notify your server of the attack
+        if (navigator.sendBeacon) {
+            const data = new FormData();
+            data.append('security_event', 'variable_tampering');
+            data.append('url', window.location.href);
+            navigator.sendBeacon('/security-log', data);
+        }
+    }
+
+    // Periodic integrity check
+    setInterval(() => {
+        // Verify variables haven't been tampered with
+        if (window.isPremiumPlan !== protectedValues.isPremiumPlan ||
+            window.isLicenseValid !== protectedValues.isLicenseValid ||
+            window.currentPlan !== protectedValues.currentPlan) {
+            
+            console.warn('Integrity check failed - resetting values');
+            window.isPremiumPlan = protectedValues.isPremiumPlan;
+            window.isLicenseValid = protectedValues.isLicenseValid;
+            window.currentPlan = protectedValues.currentPlan;
+            
+            if (++security.modificationAttempts > 2) {
+                triggerSecurityLock();
+            }
+        }
+    }, 1500);
+
+    // Initial protection
+    updateSecurityChecks();
+})();
+	
 </script>
 </body>
 </html>
