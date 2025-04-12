@@ -1284,144 +1284,114 @@ function downloadFile(file) {
   document.body.removeChild(link);
 }
 
-(function() {
-    'use strict';
+async function validateLicenseKey() {
+  const licenseKey = document.getElementById('license-key').value.trim();
+  const statusElement = document.getElementById('license-status');
+  const installButton = document.querySelector('esp-web-install-button');
 
-    // 1. Use closures to hide the real values
-    const premiumState = (function() {
-        let isPremiumPlan = false;
-        let isLicenseValid = false;
-        let currentPlan = 'free';
-        
-        return {
-            getIsPremiumPlan: () => isPremiumPlan,
-            setIsPremiumPlan: (value, source) => {
-                if (!validateSource(source)) return;
-                isPremiumPlan = value;
-            },
-            getIsLicenseValid: () => isLicenseValid,
-            setIsLicenseValid: (value, source) => {
-                if (!validateSource(source)) return;
-                isLicenseValid = value;
-            },
-            getCurrentPlan: () => currentPlan,
-            setCurrentPlan: (value, source) => {
-                if (!validateSource(source)) return;
-                currentPlan = value;
-            }
-        };
-    })();
+  if (!licenseKey) {
+    statusElement.textContent = 'Please enter a license key';
+    statusElement.style.color = '#FF4C4C';
+    isLicenseValid = false;
+    installButton.style.display = 'none';
+    return;
+  }
 
-    // 2. Source validation
-    function validateSource(source) {
-        // Only allow modifications from these specific functions
-        const validSources = [
-            'validateLicenseKey', 
-            'togglePlan',
-            'handleServerResponse'
-        ];
-        return validSources.includes(source);
+  // Get selected device
+  const selectedDevice = getSelectedDevice();
+  
+  statusElement.textContent = 'Validating...';
+  statusElement.style.color = '#FFF';
+  installButton.style.display = 'none';
+
+  try {
+    // Build URL with required parameters
+    const url = new URL('https://files.fedswtf.xyz/checkkey');
+    url.searchParams.append('key', licenseKey);
+    if (selectedDevice) {
+      url.searchParams.append('device', selectedDevice);
     }
 
-    // 3. Create proxy objects that can't be overwritten
-    Object.defineProperties(window, {
-        'isPremiumPlan': {
-            get: () => premiumState.getIsPremiumPlan(),
-            set: () => {
-                console.warn('Direct modification blocked. Use authorized methods.');
-                return false;
-            },
-            configurable: false,
-            enumerable: true
-        },
-        'isLicenseValid': {
-            get: () => premiumState.getIsLicenseValid(),
-            set: () => {
-                console.warn('Direct modification blocked. Use authorized methods.');
-                return false;
-            },
-            configurable: false,
-            enumerable: true
-        },
-        'currentPlan': {
-            get: () => premiumState.getCurrentPlan(),
-            set: () => {
-                console.warn('Direct modification blocked. Use authorized methods.');
-                return false;
-            },
-            configurable: false,
-            enumerable: true
-        }
-    });
+    const response = await fetch(url.toString());
 
-    // 4. Add mutation observers as a secondary defense
-    const observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-            if (mutation.type === 'attributes' && 
-                (mutation.attributeName === 'isPremiumPlan' || 
-                 mutation.attributeName === 'isLicenseValid' || 
-                 mutation.attributeName === 'currentPlan')) {
-                console.warn('DOM attribute tampering detected!');
-                triggerSecurityResponse();
-            }
-        });
-    });
-
-    observer.observe(window, {
-        attributes: true,
-        attributeFilter: ['isPremiumPlan', 'isLicenseValid', 'currentPlan']
-    });
-
-    // 5. Security response
-    function triggerSecurityResponse() {
-        // Reset to safe state
-        premiumState.setIsPremiumPlan(false, 'securityResponse');
-        premiumState.setIsLicenseValid(false, 'securityResponse');
-        premiumState.setCurrentPlan('free', 'securityResponse');
-        
-        // Notify server (if available)
-        if (typeof navigator.sendBeacon === 'function') {
-            const data = new FormData();
-            data.append('tamper_attempt', 'premium_override');
-            navigator.sendBeacon('/security-log', data);
-        }
-        
-        // Optional: Force page refresh
-        // window.location.reload(true);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    // 6. Override console methods to detect tampering attempts
-    const originalConsole = {
-        log: console.log,
-        warn: console.warn,
-        error: console.error
-    };
+    const result = await response.json();
 
-    console.log = function() {
-        if (arguments[0] && arguments[0].includes('isPremiumPlan') || 
-            arguments[0] && arguments[0].includes('isLicenseValid') || 
-            arguments[0] && arguments[0].includes('currentPlan')) {
-            triggerSecurityResponse();
+    // Check both success and valid flags
+    if (result.success && result.valid) {
+      statusElement.textContent = '✓ License valid! Premium features unlocked';
+      statusElement.style.color = '#4CAF50';
+      isLicenseValid = true;
+      currentPlan = 'premium';
+      installButton.style.display = 'block';
+      
+      // Update manifest with validated premium URL
+      updateManifest();
+    } else {
+      statusElement.textContent = result.message || 'Invalid license key';
+      statusElement.style.color = '#FF4C4C';
+      isLicenseValid = false;
+      currentPlan = 'free';
+      installButton.style.display = 'none';
+    }
+  } catch (error) {
+    console.error('Validation error:', error);
+    statusElement.textContent = 'Error validating license. Please try again.';
+    statusElement.style.color = '#FF4C4C';
+    isLicenseValid = false;
+    currentPlan = 'free';
+    installButton.style.display = 'none';
+  }
+}
+
+// Helper function to get selected device
+function getSelectedDevice() {
+  const selected = document.querySelector('input[name="type"]:checked');
+  return selected ? selected.value : null;
+}
+
+// Update manifest based on current validation state
+function updateManifest() {
+  const button = document.querySelector('esp-web-install-button');
+  const device = getSelectedDevice();
+  
+  if (!device) return;
+
+  if (currentPlan === 'premium' && isLicenseValid) {
+    button.manifest = `https://signalx.ddns.net/download/manifests/diamond/${device}.json`;
+  } else {
+    button.manifest = `https://signalx.ddns.net/download/manifests/${device}.json`;
+  }
+}
+
+// Initialize event listeners
+document.addEventListener('DOMContentLoaded', function() {
+  // Device selection change
+  document.querySelectorAll('input[name="type"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+      if (currentPlan === 'premium') {
+        // Re-validate when device changes for premium users
+        if (document.getElementById('license-key').value.trim()) {
+          validateLicenseKey();
         }
-        originalConsole.log.apply(console, arguments);
-    };
+      }
+      updateManifest();
+    });
+  });
 
-    // 7. Periodic integrity checks
-    setInterval(() => {
-        if (window.isPremiumPlan !== premiumState.getIsPremiumPlan() ||
-            window.isLicenseValid !== premiumState.getIsLicenseValid() ||
-            window.currentPlan !== premiumState.getCurrentPlan()) {
-            triggerSecurityResponse();
-        }
-    }, 2000);
-
-    // 8. Freeze critical objects
-    Object.freeze(Object.prototype);
-    Object.freeze(Array.prototype);
-    Object.freeze(Function.prototype);
-})();
-})();
-	
+  // License key input events
+  document.getElementById('license-key').addEventListener('input', function() {
+    if (this.value.trim() === '') {
+      document.getElementById('license-status').textContent = '';
+      isLicenseValid = false;
+      currentPlan = 'free';
+      document.querySelector('esp-web-install-button').style.display = 'none';
+    }
+  });
+});
 </script>
 </body>
 </html>
