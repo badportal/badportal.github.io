@@ -1283,117 +1283,28 @@ function downloadFile(file) {
   // Remove the link after download
   document.body.removeChild(link);
 }
-async function validateLicenseKey() {
-  const licenseKey = document.getElementById('license-key').value.trim();
-  const statusElement = document.getElementById('license-status');
-  const installButton = document.querySelector('esp-web-install-button');
+const express = require('express');
+const cors = require('cors');
 
-  if (!licenseKey) {
-    statusElement.textContent = 'Please enter a license key';
-    statusElement.style.color = '#FF4C4C';
-    isLicenseValid = false;
-    installButton.style.display = 'none';
-    return;
-  }
+const app = express();
 
-  // Get selected device
-  const selectedDevice = getSelectedDevice();
+// CORS configuration
+app.use(cors({
+  origin: 'https://signalx.ddns.net',
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Accept'],
+  credentials: false,
+  optionsSuccessStatus: 200
+}));
+
+// Your checkkey endpoint
+app.get('/checkkey', (req, res) => {
+  // ... existing validation logic ...
   
-  statusElement.textContent = 'Validating...';
-  statusElement.style.color = '#FFF';
-  installButton.style.display = 'none';
-
-  try {
-    // Using CORS proxy with proper URL encoding
-    const proxyUrl = 'https://corsproxy.io/?';
-    const targetUrl = `https://files.fedswtf.xyz/checkkey?key=${encodeURIComponent(licenseKey)}`;
-    
-    // Add device parameter if selected
-    const fullUrl = selectedDevice 
-      ? `${proxyUrl}${encodeURIComponent(targetUrl + `&device=${selectedDevice}`)}`
-      : `${proxyUrl}${encodeURIComponent(targetUrl)}`;
-
-    const response = await fetch(fullUrl, {
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest'
-      }
-    });
-
-    if (!response.ok) {
-      throw new Error(`Server returned ${response.status}`);
-    }
-
-    const result = await response.json();
-
-    // Debugging log (remove in production)
-    console.log('Validation result:', result);
-
-    if (result.success && result.valid) {
-      statusElement.textContent = '✓ License valid! Premium features unlocked';
-      statusElement.style.color = '#4CAF50';
-      isLicenseValid = true;
-      currentPlan = 'premium';
-      installButton.style.display = 'block';
-      
-      // Update manifest with validated premium URL
-      updateManifest();
-    } else {
-      statusElement.textContent = result.message || 'Invalid license key';
-      statusElement.style.color = '#FF4C4C';
-      isLicenseValid = false;
-      currentPlan = 'free';
-      installButton.style.display = 'none';
-    }
-  } catch (error) {
-    console.error('Validation error:', error);
-    statusElement.textContent = 'Error connecting to validation service';
-    statusElement.style.color = '#FF4C4C';
-    isLicenseValid = false;
-    currentPlan = 'free';
-    installButton.style.display = 'none';
-  }
-}
-
-// Helper function to get selected device
-function getSelectedDevice() {
-  const selected = document.querySelector('input[name="type"]:checked');
-  return selected ? selected.value : null;
-}
-
-// Update manifest based on current validation state
-function updateManifest() {
-  const button = document.querySelector('esp-web-install-button');
-  const device = getSelectedDevice();
-  
-  if (!device) return;
-
-  if (currentPlan === 'premium' && isLicenseValid) {
-    button.manifest = `https://signalx.ddns.net/download/manifests/diamond/${device}.json`;
-  } else {
-    button.manifest = `https://signalx.ddns.net/download/manifests/${device}.json`;
-  }
-}
-
-// Initialize event listeners
-document.addEventListener('DOMContentLoaded', function() {
-  // Device selection change
-  document.querySelectorAll('input[name="type"]').forEach(radio => {
-    radio.addEventListener('change', function() {
-      if (currentPlan === 'premium' && document.getElementById('license-key').value.trim()) {
-        validateLicenseKey();
-      }
-      updateManifest();
-    });
-  });
-
-  // Validate button click
-  document.getElementById('validate-key-btn').addEventListener('click', validateLicenseKey);
-  
-  // License key input - Enter key support
-  document.getElementById('license-key').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-      validateLicenseKey();
-    }
+  res.status(200).json({
+    success: true,
+    valid: true, // or false based on validation
+    message: 'Validation result'
   });
 });
 </script>
