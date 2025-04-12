@@ -1286,55 +1286,57 @@ function downloadFile(file) {
 async function validateLicenseKey() {
   const licenseKey = document.getElementById('license-key').value.trim();
   const statusElement = document.getElementById('license-status');
-  const installButton = document.querySelector('esp-web-install-button');
-
+  
   if (!licenseKey) {
     statusElement.textContent = 'Please enter a license key';
     statusElement.style.color = '#FF4C4C';
-    isLicenseValid = false;
-    installButton.style.display = 'none';
     return;
   }
 
-  // Get selected device
-  const selectedDevice = getSelectedDevice();
-  
   statusElement.textContent = 'Validating...';
   statusElement.style.color = '#FFF';
-  installButton.style.display = 'none';
 
   try {
-    // Build URL with required parameters
+    // Create URL object
     const url = new URL('https://files.fedswtf.xyz/checkkey');
     url.searchParams.append('key', licenseKey);
-    if (selectedDevice) {
-      url.searchParams.append('device', selectedDevice);
+    
+    // Add device parameter if selected
+    const device = getSelectedDevice();
+    if (device) {
+      url.searchParams.append('device', device);
     }
 
-    const response = await fetch(url.toString());
+    // Use mode: 'cors' and proper headers
+    const response = await fetch(url.toString(), {
+      method: 'GET',
+      mode: 'cors',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
 
+    // Check for HTTP errors
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
+    // Parse JSON response
     const result = await response.json();
 
-    // Check both success and valid flags
+    // Handle response
     if (result.success && result.valid) {
       statusElement.textContent = '✓ License valid! Premium features unlocked';
       statusElement.style.color = '#4CAF50';
       isLicenseValid = true;
       currentPlan = 'premium';
-      installButton.style.display = 'block';
-      
-      // Update manifest with validated premium URL
+      document.querySelector('esp-web-install-button').style.display = 'block';
       updateManifest();
     } else {
       statusElement.textContent = result.message || 'Invalid license key';
       statusElement.style.color = '#FF4C4C';
       isLicenseValid = false;
       currentPlan = 'free';
-      installButton.style.display = 'none';
     }
   } catch (error) {
     console.error('Validation error:', error);
@@ -1342,7 +1344,6 @@ async function validateLicenseKey() {
     statusElement.style.color = '#FF4C4C';
     isLicenseValid = false;
     currentPlan = 'free';
-    installButton.style.display = 'none';
   }
 }
 
