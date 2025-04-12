@@ -1286,64 +1286,71 @@ function downloadFile(file) {
 async function validateLicenseKey() {
   const licenseKey = document.getElementById('license-key').value.trim();
   const statusElement = document.getElementById('license-status');
-  
+  const installButton = document.querySelector('esp-web-install-button');
+
   if (!licenseKey) {
     statusElement.textContent = 'Please enter a license key';
     statusElement.style.color = '#FF4C4C';
+    isLicenseValid = false;
+    installButton.style.display = 'none';
     return;
   }
 
+  // Get selected device
+  const selectedDevice = getSelectedDevice();
+  
   statusElement.textContent = 'Validating...';
   statusElement.style.color = '#FFF';
+  installButton.style.display = 'none';
 
   try {
-    // Create URL object
-    const url = new URL('https://files.fedswtf.xyz/checkkey');
-    url.searchParams.append('key', licenseKey);
+    // Using CORS proxy with proper URL encoding
+    const proxyUrl = 'https://corsproxy.io/?';
+    const targetUrl = `https://files.fedswtf.xyz/checkkey?key=${encodeURIComponent(licenseKey)}`;
     
     // Add device parameter if selected
-    const device = getSelectedDevice();
-    if (device) {
-      url.searchParams.append('device', device);
-    }
+    const fullUrl = selectedDevice 
+      ? `${proxyUrl}${encodeURIComponent(targetUrl + `&device=${selectedDevice}`)}`
+      : `${proxyUrl}${encodeURIComponent(targetUrl)}`;
 
-    // Use mode: 'cors' and proper headers
-    const response = await fetch(url.toString(), {
-      method: 'GET',
-      mode: 'cors',
+    const response = await fetch(fullUrl, {
       headers: {
-        'Accept': 'application/json'
+        'X-Requested-With': 'XMLHttpRequest'
       }
     });
 
-    // Check for HTTP errors
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error(`Server returned ${response.status}`);
     }
 
-    // Parse JSON response
     const result = await response.json();
 
-    // Handle response
+    // Debugging log (remove in production)
+    console.log('Validation result:', result);
+
     if (result.success && result.valid) {
       statusElement.textContent = '✓ License valid! Premium features unlocked';
       statusElement.style.color = '#4CAF50';
       isLicenseValid = true;
       currentPlan = 'premium';
-      document.querySelector('esp-web-install-button').style.display = 'block';
+      installButton.style.display = 'block';
+      
+      // Update manifest with validated premium URL
       updateManifest();
     } else {
       statusElement.textContent = result.message || 'Invalid license key';
       statusElement.style.color = '#FF4C4C';
       isLicenseValid = false;
       currentPlan = 'free';
+      installButton.style.display = 'none';
     }
   } catch (error) {
     console.error('Validation error:', error);
-    statusElement.textContent = 'Error validating license. Please try again.';
+    statusElement.textContent = 'Error connecting to validation service';
     statusElement.style.color = '#FF4C4C';
     isLicenseValid = false;
     currentPlan = 'free';
+    installButton.style.display = 'none';
   }
 }
 
@@ -1372,23 +1379,20 @@ document.addEventListener('DOMContentLoaded', function() {
   // Device selection change
   document.querySelectorAll('input[name="type"]').forEach(radio => {
     radio.addEventListener('change', function() {
-      if (currentPlan === 'premium') {
-        // Re-validate when device changes for premium users
-        if (document.getElementById('license-key').value.trim()) {
-          validateLicenseKey();
-        }
+      if (currentPlan === 'premium' && document.getElementById('license-key').value.trim()) {
+        validateLicenseKey();
       }
       updateManifest();
     });
   });
 
-  // License key input events
-  document.getElementById('license-key').addEventListener('input', function() {
-    if (this.value.trim() === '') {
-      document.getElementById('license-status').textContent = '';
-      isLicenseValid = false;
-      currentPlan = 'free';
-      document.querySelector('esp-web-install-button').style.display = 'none';
+  // Validate button click
+  document.getElementById('validate-key-btn').addEventListener('click', validateLicenseKey);
+  
+  // License key input - Enter key support
+  document.getElementById('license-key').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      validateLicenseKey();
     }
   });
 });
