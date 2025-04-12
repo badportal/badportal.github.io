@@ -1283,30 +1283,45 @@ function downloadFile(file) {
   // Remove the link after download
   document.body.removeChild(link);
 }
-const express = require('express');
-const cors = require('cors');
+async function validateLicenseKey() {
+    const licenseKey = document.getElementById('license-key').value.trim();
+    const statusElement = document.getElementById('license-status');
+    
+    try {
+        const response = await fetch(`https://files.fedswtf.xyz/checkkey?key=${encodeURIComponent(licenseKey)}`);
+        const result = await response.json();
 
-const app = express();
+        // Verify the response hasn't been tampered with
+        if (!verifyResponse(result, licenseKey)) {
+            throw new Error('Invalid server response');
+        }
 
-// CORS configuration
-app.use(cors({
-  origin: 'https://signalx.ddns.net',
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Accept'],
-  credentials: false,
-  optionsSuccessStatus: 200
-}));
+        if (result.valid) {
+            statusElement.textContent = '✓ Valid license!';
+            statusElement.style.color = '#4CAF50';
+            isLicenseValid = true;
+        } else {
+            statusElement.textContent = result.message || 'Invalid license';
+            statusElement.style.color = '#FF4C4C';
+            isLicenseValid = false;
+        }
+    } catch (error) {
+        statusElement.textContent = 'Validation failed (try reloading)';
+        statusElement.style.color = '#FF4C4C';
+        isLicenseValid = false;
+    }
+    updateInstallButtonVisibility();
+}
 
-// Your checkkey endpoint
-app.get('/checkkey', (req, res) => {
-  // ... existing validation logic ...
-  
-  res.status(200).json({
-    success: true,
-    valid: true, // or false based on validation
-    message: 'Validation result'
-  });
-});
+function verifyResponse(response, licenseKey) {
+    // Recreate the verification token
+    const expectedToken = crypto.createHash('sha256')
+        .update(licenseKey + response.valid.toString() + 'your_server_secret')
+        .digest('hex');
+    
+    return response._v === expectedToken;
+}
+	
 </script>
 </body>
 </html>
