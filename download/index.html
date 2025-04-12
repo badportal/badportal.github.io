@@ -1287,155 +1287,139 @@ function downloadFile(file) {
 (function() {
     'use strict';
 
-    // Original protected values
-    const protectedValues = {
-        isPremiumPlan: false,
-        isLicenseValid: false,
-        currentPlan: 'free'
-    };
+    // 1. Use closures to hide the real values
+    const premiumState = (function() {
+        let isPremiumPlan = false;
+        let isLicenseValid = false;
+        let currentPlan = 'free';
+        
+        return {
+            getIsPremiumPlan: () => isPremiumPlan,
+            setIsPremiumPlan: (value, source) => {
+                if (!validateSource(source)) return;
+                isPremiumPlan = value;
+            },
+            getIsLicenseValid: () => isLicenseValid,
+            setIsLicenseValid: (value, source) => {
+                if (!validateSource(source)) return;
+                isLicenseValid = value;
+            },
+            getCurrentPlan: () => currentPlan,
+            setCurrentPlan: (value, source) => {
+                if (!validateSource(source)) return;
+                currentPlan = value;
+            }
+        };
+    })();
 
-    // Freeze the original values to prevent modification
-    Object.freeze(protectedValues);
+    // 2. Source validation
+    function validateSource(source) {
+        // Only allow modifications from these specific functions
+        const validSources = [
+            'validateLicenseKey', 
+            'togglePlan',
+            'handleServerResponse'
+        ];
+        return validSources.includes(source);
+    }
 
-    // Create secure getters/setters for the window variables
+    // 3. Create proxy objects that can't be overwritten
     Object.defineProperties(window, {
         'isPremiumPlan': {
-            get: () => protectedValues.isPremiumPlan,
-            set: (value) => {
-                if (!validateSecureUpdate('isPremiumPlan', value)) {
-                    console.warn('Unauthorized modification attempt detected for isPremiumPlan');
-                    return;
-                }
-                protectedValues.isPremiumPlan = value;
-                updateSecurityChecks();
+            get: () => premiumState.getIsPremiumPlan(),
+            set: () => {
+                console.warn('Direct modification blocked. Use authorized methods.');
+                return false;
             },
             configurable: false,
             enumerable: true
         },
         'isLicenseValid': {
-            get: () => protectedValues.isLicenseValid,
-            set: (value) => {
-                if (!validateSecureUpdate('isLicenseValid', value)) {
-                    console.warn('Unauthorized modification attempt detected for isLicenseValid');
-                    return;
-                }
-                protectedValues.isLicenseValid = value;
-                updateSecurityChecks();
+            get: () => premiumState.getIsLicenseValid(),
+            set: () => {
+                console.warn('Direct modification blocked. Use authorized methods.');
+                return false;
             },
             configurable: false,
             enumerable: true
         },
         'currentPlan': {
-            get: () => protectedValues.currentPlan,
-            set: (value) => {
-                if (!validateSecureUpdate('currentPlan', value)) {
-                    console.warn('Unauthorized modification attempt detected for currentPlan');
-                    return;
-                }
-                protectedValues.currentPlan = value;
-                updateSecurityChecks();
+            get: () => premiumState.getCurrentPlan(),
+            set: () => {
+                console.warn('Direct modification blocked. Use authorized methods.');
+                return false;
             },
             configurable: false,
             enumerable: true
         }
     });
 
-    // Track modification attempts
-    let security = {
-        lastValidUpdate: Date.now(),
-        modificationAttempts: 0,
-        lastAttempt: 0
-    };
-
-    // Validate updates come from authorized code paths
-    function validateSecureUpdate(property, value) {
-        // Get the call stack
-        const stack = new Error().stack;
-        
-        // Only allow updates from your own code files
-        const validSources = [
-            '/download/', // Your download page
-            'validateLicenseKey', // Your validation function
-            'togglePlan' // Your plan toggle function
-        ];
-        
-        // Check if the update comes from an authorized source
-        const isValidSource = validSources.some(source => stack.includes(source));
-        
-        // Rate limit updates
-        const now = Date.now();
-        if (now - security.lastAttempt < 1000) {
-            security.modificationAttempts++;
-            if (security.modificationAttempts > 3) {
-                triggerSecurityLock();
-                return false;
+    // 4. Add mutation observers as a secondary defense
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.type === 'attributes' && 
+                (mutation.attributeName === 'isPremiumPlan' || 
+                 mutation.attributeName === 'isLicenseValid' || 
+                 mutation.attributeName === 'currentPlan')) {
+                console.warn('DOM attribute tampering detected!');
+                triggerSecurityResponse();
             }
-        } else {
-            security.modificationAttempts = 0;
-        }
-        security.lastAttempt = now;
-        
-        return isValidSource;
-    }
-
-    // Additional security checks
-    function updateSecurityChecks() {
-        // Verify the values maintain logical consistency
-        if (protectedValues.currentPlan === 'free' && protectedValues.isPremiumPlan) {
-            protectedValues.isPremiumPlan = false;
-            protectedValues.isLicenseValid = false;
-        }
-        
-        if (!protectedValues.isPremiumPlan && protectedValues.isLicenseValid) {
-            protectedValues.isLicenseValid = false;
-        }
-    }
-
-    // Security lockdown
-    function triggerSecurityLock() {
-        console.error('SECURITY LOCKDOWN: Multiple unauthorized modification attempts detected');
-        
-        // Reset to safe state
-        protectedValues.isPremiumPlan = false;
-        protectedValues.isLicenseValid = false;
-        protectedValues.currentPlan = 'free';
-        
-        // Disable further modifications
-        Object.defineProperties(window, {
-            'isPremiumPlan': { value: false, writable: false },
-            'isLicenseValid': { value: false, writable: false },
-            'currentPlan': { value: 'free', writable: false }
         });
+    });
+
+    observer.observe(window, {
+        attributes: true,
+        attributeFilter: ['isPremiumPlan', 'isLicenseValid', 'currentPlan']
+    });
+
+    // 5. Security response
+    function triggerSecurityResponse() {
+        // Reset to safe state
+        premiumState.setIsPremiumPlan(false, 'securityResponse');
+        premiumState.setIsLicenseValid(false, 'securityResponse');
+        premiumState.setCurrentPlan('free', 'securityResponse');
         
-        // Optional: Notify your server of the attack
-        if (navigator.sendBeacon) {
+        // Notify server (if available)
+        if (typeof navigator.sendBeacon === 'function') {
             const data = new FormData();
-            data.append('security_event', 'variable_tampering');
-            data.append('url', window.location.href);
+            data.append('tamper_attempt', 'premium_override');
             navigator.sendBeacon('/security-log', data);
         }
+        
+        // Optional: Force page refresh
+        // window.location.reload(true);
     }
 
-    // Periodic integrity check
-    setInterval(() => {
-        // Verify variables haven't been tampered with
-        if (window.isPremiumPlan !== protectedValues.isPremiumPlan ||
-            window.isLicenseValid !== protectedValues.isLicenseValid ||
-            window.currentPlan !== protectedValues.currentPlan) {
-            
-            console.warn('Integrity check failed - resetting values');
-            window.isPremiumPlan = protectedValues.isPremiumPlan;
-            window.isLicenseValid = protectedValues.isLicenseValid;
-            window.currentPlan = protectedValues.currentPlan;
-            
-            if (++security.modificationAttempts > 2) {
-                triggerSecurityLock();
-            }
-        }
-    }, 1500);
+    // 6. Override console methods to detect tampering attempts
+    const originalConsole = {
+        log: console.log,
+        warn: console.warn,
+        error: console.error
+    };
 
-    // Initial protection
-    updateSecurityChecks();
+    console.log = function() {
+        if (arguments[0] && arguments[0].includes('isPremiumPlan') || 
+            arguments[0] && arguments[0].includes('isLicenseValid') || 
+            arguments[0] && arguments[0].includes('currentPlan')) {
+            triggerSecurityResponse();
+        }
+        originalConsole.log.apply(console, arguments);
+    };
+
+    // 7. Periodic integrity checks
+    setInterval(() => {
+        if (window.isPremiumPlan !== premiumState.getIsPremiumPlan() ||
+            window.isLicenseValid !== premiumState.getIsLicenseValid() ||
+            window.currentPlan !== premiumState.getCurrentPlan()) {
+            triggerSecurityResponse();
+        }
+    }, 2000);
+
+    // 8. Freeze critical objects
+    Object.freeze(Object.prototype);
+    Object.freeze(Array.prototype);
+    Object.freeze(Function.prototype);
+})();
 })();
 	
 </script>
